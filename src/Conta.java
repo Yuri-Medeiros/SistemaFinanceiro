@@ -7,15 +7,11 @@ import java.util.Scanner;
 
 public class Conta {
 
-    private final String login;
-    private final String senha;
     private float saldo;
     private List<Transacao> extrato;
     private List<String> categorias;
 
-    public Conta(String login, String senha){
-        this.login = login;
-        this.senha = senha;
+    public Conta(){
         this.saldo = 0;
         this.extrato = new ArrayList<>();
         this.categorias = new ArrayList<>();
@@ -23,10 +19,6 @@ public class Conta {
 
     public float getSaldo(){
         return saldo;
-    }
-
-    public boolean logar(String login, String senha){
-        return this.login.equals(login) && this.senha.equals(senha);
     }
 
     public void depositar(float valor, LocalDate data, String categoria, String descricao){
