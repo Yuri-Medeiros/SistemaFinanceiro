@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.util.Objects;
 
 public class TelaPrincipal extends JFrame {
@@ -6,8 +7,6 @@ public class TelaPrincipal extends JFrame {
     public TelaPrincipal(){
 
         //Define propriedades da pagina
-        ImageIcon icon = new ImageIcon(getClass().getResource("/Icone.png"));
-        setIconImage(icon.getImage());
         setTitle("Controle Financeiro");
         setSize(600,600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
