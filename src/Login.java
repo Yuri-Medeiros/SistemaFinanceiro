@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 class Login extends JFrame {
 
     /*
-    Define o campo para preencher o usuario,
+    Define o campo para preencher oo usuario,
     campo para preencher a senha
     e botão para ação
     */
