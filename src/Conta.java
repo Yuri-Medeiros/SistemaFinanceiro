@@ -1,123 +1,129 @@
 import java.time.LocalDate;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 public class Conta {
-
     private float saldo;
-    private List<Transacao> extrato;
-    private List<String> categorias;
+    private final List<Transacao> extrato;
+    private final List<String> categorias;
 
-    public Conta(){
+    public Conta() {
         this.saldo = 0;
         this.extrato = new ArrayList<>();
         this.categorias = new ArrayList<>();
+
+        // Categorias padrão
+        this.categorias.add("Alimentação");
+        this.categorias.add("Transporte");
+        this.categorias.add("Salário");
+        this.categorias.add("Lazer");
+        this.categorias.add("Moradia");
     }
 
-    public float getSaldo(){
-        return saldo;
-    }
-
-    public void depositar(float valor, LocalDate data, String categoria, String descricao){
+    // Métodos para transações
+    public void depositar(float valor, LocalDate data, String categoria, String descricao) {
+        validarTransacao(valor, categoria, descricao, data);
         Transacao deposito = new Transacao(valor, categoria, descricao, data, 'E');
         this.extrato.add(deposito);
         this.saldo += valor;
     }
 
-    public void sacar(float valor, LocalDate data, String categoria, String descricao){
+    public void sacar(float valor, LocalDate data, String categoria, String descricao) {
+        validarTransacao(valor, categoria, descricao, data);
+        if (valor > saldo) {
+            throw new IllegalArgumentException("Saldo insuficiente");
+        }
         Transacao saque = new Transacao(valor, categoria, descricao, data, 'S');
         this.extrato.add(saque);
         this.saldo -= valor;
     }
 
-    public void adicionarCategoria(String categoria){
-        this.categorias.add(categoria);
-    }
-
-    public void editarCategoria(String categoria){
-
-        exibirCategorias();
-
-        System.out.print("Informe o número da categoria a ser editada:");
-
-        Scanner scanner = new Scanner(System.in);
-        int opcao = scanner.nextInt();
-
-        System.out.print("Informe a nova descrição da categoria:");
-        String novaCategoria = scanner.nextLine();
-
-        this.categorias.remove(opcao - 1);
-        this.categorias.add(novaCategoria);
-        scanner.close();
-
-        System.out.println("Categoria editada com sucesso!");
-    }
-
-    public void removerCategoria(){
-
-        exibirCategorias();
-
-        System.out.print("Informe o número da categoria a ser excluida:");
-
-        Scanner scanner = new Scanner(System.in);
-        int opcao = scanner.nextInt();
-
-        this.categorias.remove(opcao - 1);
-
-        System.out.println("Categoria removida com sucesso!");
-        scanner.close();
-    }
-
-    public void exibirCategorias(){
-
-        System.out.println("Listando categorias:");
-
-        for (int i = 0; i < this.categorias.size(); i++){
-            System.out.println(i + ") " + this.categorias.get(i));
+    private void validarTransacao(float valor, String categoria, String descricao, LocalDate data) {
+        if (valor <= 0) {
+            throw new IllegalArgumentException("Valor deve ser positivo");
+        }
+        if (categoria == null || categoria.trim().isEmpty()) {
+            throw new IllegalArgumentException("Categoria não pode ser vazia");
+        }
+        if (descricao == null || descricao.trim().isEmpty()) {
+            throw new IllegalArgumentException("Descrição não pode ser vazia");
+        }
+        if (data == null) {
+            throw new IllegalArgumentException("Data não pode ser nula");
         }
     }
 
-    public void mostrarExtrato(List<String> categoria, LocalDate inicio, LocalDate fim, List<Character> tipo){
+    // Métodos para categorias
+    public void adicionarCategoria(String categoria) {
+        if (categoria == null || categoria.trim().isEmpty()) {
+            throw new IllegalArgumentException("Categoria não pode ser vazia");
+        }
+        if (this.categorias.contains(categoria)) {
+            throw new IllegalArgumentException("Categoria já existe");
+        }
+        this.categorias.add(categoria.trim());
+    }
 
-        for(Transacao transacao : this.extrato){
+    public void editarCategoria(int indice, String novaCategoria) {
+        if (indice < 0 || indice >= categorias.size()) {
+            throw new IndexOutOfBoundsException("Índice inválido");
+        }
+        this.categorias.set(indice, novaCategoria.trim());
+    }
 
-            boolean validaCategoria = categoria.contains(transacao.getCategoria());
-            boolean validaData = ((transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim))
-                    || transacao.getData().equals(inicio)
-                    || transacao.getData().equals(fim));
-            boolean validaTipo = tipo.contains(transacao.getTipo());
+    public void removerCategoria(int indice) {
+        if (indice < 0 || indice >= categorias.size()) {
+            throw new IndexOutOfBoundsException("Índice inválido");
+        }
+        this.categorias.remove(indice);
+    }
 
-            if(validaCategoria && validaTipo && validaData){
-                transacao.exibirTransacao();
-                System.out.println("---------------------------------------------------");
+    // Métodos de consulta
+    public Map<String, Float> getResumoPorCategoria(LocalDate inicio, LocalDate fim) {
+        Map<String, Float> resumo = new HashMap<>();
+
+        for (Transacao t : extrato) {
+            if (!t.getData().isBefore(inicio) && !t.getData().isAfter(fim)) {
+                float valor = t.getTipo() == 'E' ? t.getValor() : -t.getValor();
+                resumo.merge(t.getCategoria(), valor, Float::sum);
             }
         }
+        return resumo;
     }
 
-    public Map<Character, Float> mostrarSaldoPorCategoria(LocalDate inicio, LocalDate fim){
+    public Map<Character, Float> mostrarSaldoPorCategoria(LocalDate inicio, LocalDate fim) {
+        Map<Character, Float> totais = new HashMap<>();
+        totais.put('E', 0.0f); // Receitas
+        totais.put('S', 0.0f); // Despesas
 
-        Map<Character, Float> valorTotal = new HashMap<>();
-        valorTotal.put('E', 0f);
-        valorTotal.put('S', 0f);
-
-        for(Transacao transacao : this.extrato){
-
-            boolean validaData = ((transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim))
-                    || transacao.getData().equals(inicio)
-                    || transacao.getData().equals(fim));
-
-            if(validaData){
-
-                Character tipo = transacao.getTipo();
-                float valor = transacao.getValor() + valorTotal.get(tipo);
-
-                valorTotal.put(tipo, valor);
+        for (Transacao t : extrato) {
+            if (!t.getData().isBefore(inicio) && !t.getData().isAfter(fim)) {
+                totais.put(t.getTipo(), totais.get(t.getTipo()) + t.getValor());
             }
         }
+        return totais;
+    }
 
-        return valorTotal;
+    // Getters
+    public float getSaldo() {
+        return saldo;
+    }
+
+    public List<Transacao> getExtrato() {
+        return new ArrayList<>(extrato);
+    }
+
+    public List<String> getCategorias() {
+        return new ArrayList<>(categorias);
+    }
+
+
+    public void exibirCategorias() {
+        System.out.println("\n--- CATEGORIAS ---");
+        for (int i = 0; i < categorias.size(); i++) {
+            System.out.println(i + " - " + categorias.get(i));
+        }
     }
 }
