@@ -44,8 +44,8 @@ public class TelaPrincipal extends JFrame {
         setVisible(true);
     }
 
-        Conta conta = new Conta();                  //Cria conta
         /*
+        Conta conta = new Conta();                  //Cria conta
         *  APLICAR LÓGICA AQUI --------
         *
         *  Para realizar as operações usem a classe criada acima: conta

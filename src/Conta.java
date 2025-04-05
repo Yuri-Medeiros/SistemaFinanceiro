@@ -8,13 +8,29 @@ import java.util.Scanner;
 public class Conta {
 
     private float saldo;
-    private List<Transacao> extrato;
-    private List<String> categorias;
+    private final List<Transacao> extrato;
+    private final List<String> categorias;
+    private final String login;
+    private String senha;
 
-    public Conta(){
+    public Conta(String login, String senha) {
         this.saldo = 0;
         this.extrato = new ArrayList<>();
         this.categorias = new ArrayList<>();
+        this.login = login;
+        this.senha = senha;
+    }
+
+    public void setSenha(String senha){
+        this.senha = senha;
+    }
+
+    public String getLogin(){
+        return this.login;
+    }
+
+    public String getSenha(){
+        return this.senha;
     }
 
     public float getSaldo(){
