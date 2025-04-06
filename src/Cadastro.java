@@ -19,7 +19,6 @@ class Cadastro extends JFrame {
         //Mesmos elementos abaixo de Login
         setTitle("Nova conta");
         setSize(300, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
 
@@ -27,7 +26,7 @@ class Cadastro extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel userLabel = new JLabel("Novo usuário:");
+        JLabel userLabel = new JLabel("Nova login:");
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -66,6 +65,11 @@ class Cadastro extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String username = usuario.getText();
                 String password = new String(senha.getPassword());
+
+                if(username.isEmpty() || password.isEmpty()){
+                    JOptionPane.showMessageDialog(Cadastro.this, "Preencha todos os campos", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 //Verifica se o Login ja existe
                 if(!checkLogin()){

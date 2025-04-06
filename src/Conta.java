@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
@@ -5,13 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Conta {
+public class Conta extends JFrame{
 
     private float saldo;
     private final List<Transacao> extrato;
     private final List<String> categorias;
     private final String login;
-    private String senha;
+    private final String senha;
 
     public Conta(String login, String senha) {
         this.saldo = 0;
@@ -21,17 +23,11 @@ public class Conta {
         this.senha = senha;
     }
 
-    public void setSenha(String senha){
-        this.senha = senha;
-    }
-
     public String getLogin(){
         return this.login;
     }
 
-    public String getSenha(){
-        return this.senha;
-    }
+    public String getSenha(){return this.senha;}
 
     public float getSaldo(){
         return saldo;

@@ -79,8 +79,11 @@ class Login extends JFrame {
 
                 //Verifica informações
                 if (checarLoginSenha()) {
-                    dispose();                                              //Fecha tela de Login
-                    new TelaPrincipal().setVisible(true);                   //Da start na tela principal
+
+                    //Fecha a tela e abre cadastro
+                    dispose();
+                    new TelaPrincipal().setVisible(true);
+
                 } else {
                     //Se false, exibe mensagem de erro
                     JOptionPane.showMessageDialog(Login.this, "Usuário ou senha incorretos!", "Erro", JOptionPane.ERROR_MESSAGE);

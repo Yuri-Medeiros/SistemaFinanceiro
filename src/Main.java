@@ -12,6 +12,7 @@ public class Main {
 
         //Executa a interface gráfica chamando criando a classe Login
         SwingUtilities.invokeLater(() -> new Login().setVisible(true));
+
     }
 }
 
