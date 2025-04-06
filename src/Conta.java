@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class Conta extends JFrame{
 
@@ -23,15 +22,15 @@ public class Conta extends JFrame{
         this.senha = senha;
     }
 
-    public String getLogin(){
-        return this.login;
-    }
+    public String getLogin() { return this.login; }
 
-    public String getSenha(){return this.senha;}
+    public String getSenha() { return this.senha; }
 
-    public float getSaldo(){
-        return saldo;
-    }
+    public List<String> getCategorias() { return this.categorias; }
+
+    public float getSaldo() { return saldo; }
+
+    public List<Transacao> getExtrato() { return this.extrato; }
 
     public void depositar(float valor, LocalDate data, String categoria, String descricao){
         Transacao deposito = new Transacao(valor, categoria, descricao, data, 'E');
@@ -45,68 +44,17 @@ public class Conta extends JFrame{
         this.saldo -= valor;
     }
 
-    public void adicionarCategoria(String categoria){
-        this.categorias.add(categoria);
+    public void adicionarCategoria(String categoria) { this.categorias.add(categoria); }
+
+    public void editarCategoria(String categoriaOld, String categoriaNew) {
+
+        this.categorias.remove(categoriaOld);
+        this.categorias.add(categoriaNew);
     }
 
-    public void editarCategoria(String categoria){
+    public void removerCategoria(String categoria) {
 
-        exibirCategorias();
-
-        System.out.print("Informe o número da categoria a ser editada:");
-
-        Scanner scanner = new Scanner(System.in);
-        int opcao = scanner.nextInt();
-
-        System.out.print("Informe a nova descrição da categoria:");
-        String novaCategoria = scanner.nextLine();
-
-        this.categorias.remove(opcao - 1);
-        this.categorias.add(novaCategoria);
-        scanner.close();
-
-        System.out.println("Categoria editada com sucesso!");
-    }
-
-    public void removerCategoria(){
-
-        exibirCategorias();
-
-        System.out.print("Informe o número da categoria a ser excluida:");
-
-        Scanner scanner = new Scanner(System.in);
-        int opcao = scanner.nextInt();
-
-        this.categorias.remove(opcao - 1);
-
-        System.out.println("Categoria removida com sucesso!");
-        scanner.close();
-    }
-
-    public void exibirCategorias(){
-
-        System.out.println("Listando categorias:");
-
-        for (int i = 0; i < this.categorias.size(); i++){
-            System.out.println(i + ") " + this.categorias.get(i));
-        }
-    }
-
-    public void mostrarExtrato(List<String> categoria, LocalDate inicio, LocalDate fim, List<Character> tipo){
-
-        for(Transacao transacao : this.extrato){
-
-            boolean validaCategoria = categoria.contains(transacao.getCategoria());
-            boolean validaData = ((transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim))
-                    || transacao.getData().equals(inicio)
-                    || transacao.getData().equals(fim));
-            boolean validaTipo = tipo.contains(transacao.getTipo());
-
-            if(validaCategoria && validaTipo && validaData){
-                transacao.exibirTransacao();
-                System.out.println("---------------------------------------------------");
-            }
-        }
+        this.categorias.remove(categoria);
     }
 
     public Map<Character, Float> mostrarSaldoPorCategoria(LocalDate inicio, LocalDate fim){

@@ -59,14 +59,18 @@ class Login extends JFrame {
 
         //Insere botão de login
         JButton botaoLogin = new JButton("Login");
+        botaoLogin.setBackground(new Color(0, 168, 107));
+        botaoLogin.setForeground(Color.WHITE);
+        gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 1;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.CENTER;
         add(botaoLogin, gbc);
 
         //Insere botão de cadastro
         botaoCadastro = new JButton("Cadastrar");
-        gbc.gridx = 1;
+        botaoCadastro.setBackground(new Color(0, 120, 215));
+        botaoCadastro.setForeground(Color.WHITE);
         gbc.gridy = 3;
         add(botaoCadastro, gbc);
 

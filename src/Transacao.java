@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class Transacao extends JFrame {
 
@@ -34,14 +33,5 @@ public class Transacao extends JFrame {
 
     public Float getValor() {
         return valor;
-    }
-
-    public void exibirTransacao(){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        String dataFormatada = dtf.format(this.data);
-        String texto = dataFormatada + " - " + this.categoria + " - " + this.descricao + " - " + this.valor;
-
-
     }
 }
