@@ -1,7 +1,8 @@
+import javax.swing.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class Transacao {
+public class Transacao extends JFrame {
 
     private final Character tipo;
     private final float valor;
@@ -25,6 +26,8 @@ public class Transacao {
         return categoria;
     }
 
+    public String getDescricao() {return descricao;}
+
     public LocalDate getData() {
         return data;
     }
@@ -37,6 +40,8 @@ public class Transacao {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         String dataFormatada = dtf.format(this.data);
-        System.out.println(dataFormatada + " - " + this.categoria + " - " + this.descricao + " - " + this.valor);
+        String texto = dataFormatada + " - " + this.categoria + " - " + this.descricao + " - " + this.valor;
+
+
     }
 }

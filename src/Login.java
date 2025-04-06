@@ -82,7 +82,7 @@ class Login extends JFrame {
 
                     //Fecha a tela e abre cadastro
                     dispose();
-                    new TelaPrincipal().setVisible(true);
+                    SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
 
                 } else {
                     //Se false, exibe mensagem de erro

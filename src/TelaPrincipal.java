@@ -46,109 +46,16 @@ public class TelaPrincipal extends JFrame {
         panelBotao.add(btnSair);
         panel.add(panelBotao, BorderLayout.SOUTH);
 
-        btnAdicionar.addActionListener(new ActionListener() {
+        btnAdicionar.addActionListener(e -> {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            dispose();
+            novaTransacao();
+        });
 
-                JFrame telaLancamento = new JFrame();
+        btnCategorias.addActionListener(e -> {
 
-                telaLancamento.setTitle("Gestão Financeira - Adicionar Transação");
-                telaLancamento.setSize(400, 300);
-                telaLancamento.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                telaLancamento.setLocationRelativeTo(null);
-
-                telaLancamento.setLayout(new BorderLayout());
-
-                // título
-                JLabel titulo = new JLabel("Adicionar Nova Transação", SwingConstants.CENTER);
-                titulo.setFont(new Font("Arial", Font.BOLD, 18));
-                telaLancamento.add(titulo, BorderLayout.NORTH);
-
-                // formulário
-                JPanel panel = new JPanel(new GridLayout(8, 2, 5, 5));
-                panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-                panel.add(new JLabel("Valor:\nApenas números e separe por ."));
-                JTextField campoValor = new JTextField();
-                panel.add(campoValor);
-
-                panel.add(new JLabel("Categoria:"));
-                JComboBox<String> campoCategoria = new JComboBox<>(new String[]{"Escolha uma opção...","Receita", "Despesa"});
-                panel.add(campoCategoria);
-
-                panel.add(new JLabel("Data:"));
-
-
-                try {
-                    MaskFormatter mascaraData = new MaskFormatter("##/##/####");
-                    mascaraData.setPlaceholderCharacter('_');
-
-                    campoData = new JFormattedTextField(mascaraData); // 2. Instanciar dentro do try
-                    campoData.setColumns(10);
-
-                    panel.add(campoData);
-                } catch (ParseException er) {
-                    JOptionPane.showMessageDialog(null, "Erro ao aplicar máscara na data.");
-                    return;
-                }
-
-                panel.add(new JLabel("Descrição:"));
-                JTextField campoDescricao = new JTextField();
-                panel.add(campoDescricao);
-
-                telaLancamento.add(panel, BorderLayout.CENTER);
-
-                // botões
-                JPanel botoesPanel = new JPanel();
-                JButton btnSalvar = new JButton("Salvar");
-                JButton btnCancelar = new JButton("Cancelar");
-
-                btnSalvar.addActionListener(new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-
-                        if(campoValor.getText().isEmpty() ||
-                                campoCategoria.getSelectedIndex() == 0 ||
-                                campoDescricao.getText().isEmpty() ||
-                                campoData.getText().contains("_")){
-                            JOptionPane.showMessageDialog(TelaPrincipal.this, "Usuário ou senha incorretos!", "Erro", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-
-                        if(campoValor.getText().matches("\\d+")){
-
-                            // Tenta converter para LocalDate
-                            DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-                            campoValor.setText(campoValor.getText().replace(',', '.'));
-                            float valor = Float.parseFloat(campoValor.getText());
-
-                            try {
-                                LocalDate dataConvertida = LocalDate.parse(campoData.getText(), formato);
-                                JOptionPane.showMessageDialog(null, "Data válida: " + dataConvertida);
-
-                                if(campoCategoria.getSelectedItem().equals("Receita")){
-                                    //CONTINUAR AQUI
-                                    //Main.contaAtiva.depositar(valor, );
-                                }
-                            } catch (DateTimeParseException ex) {
-                                JOptionPane.showMessageDialog(null, "Data inválida!");
-                            }
-                        }
-                    }
-                });
-
-                btnCancelar.addActionListener(ev -> dispose());
-
-                botoesPanel.add(btnSalvar);
-                botoesPanel.add(btnCancelar);
-
-                telaLancamento.add(botoesPanel, BorderLayout.SOUTH);
-
-                telaLancamento.setVisible(true);
-            }
+            dispose();
+            consulta();
         });
 
         //btnAdicionar.addActionListener();
@@ -163,5 +70,121 @@ public class TelaPrincipal extends JFrame {
 
         // Adicionando o painel principal à janela
         add(panel);
+    }
+
+    private void novaTransacao(){
+
+        JFrame telaLancamento = new JFrame();
+        telaLancamento.setVisible(true);
+
+        telaLancamento.setTitle("Gestão Financeira - Adicionar Transação");
+        telaLancamento.setSize(400, 300);
+        telaLancamento.setLocationRelativeTo(null);
+
+        telaLancamento.setLayout(new BorderLayout());
+
+        // título
+        JLabel titulo = new JLabel("Adicionar Nova Transação", SwingConstants.CENTER);
+        titulo.setFont(new Font("Arial", Font.BOLD, 18));
+        telaLancamento.add(titulo, BorderLayout.NORTH);
+
+        // formulário
+        JPanel panel = new JPanel(new GridLayout(8, 2, 5, 5));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        panel.add(new JLabel("Valor: (Apenas números e separe por .)"));
+        JTextField campoValor = new JTextField();
+        panel.add(campoValor);
+
+        panel.add(new JLabel("Categoria:"));
+        JComboBox<String> campoCategoria = new JComboBox<>(new String[]{"Escolha uma opção...","Receita", "Despesa"});
+        panel.add(campoCategoria);
+
+        panel.add(new JLabel("Data:"));
+
+        try {
+            MaskFormatter mascaraData = new MaskFormatter("##/##/####");
+            mascaraData.setPlaceholderCharacter('_');
+
+            campoData = new JFormattedTextField(mascaraData); // 2. Instanciar dentro do try
+            campoData.setColumns(10);
+
+            panel.add(campoData);
+        } catch (ParseException er) {
+            JOptionPane.showMessageDialog(null, "Erro ao armazenar a data. Tente novamente!");
+            return;
+        }
+
+        panel.add(new JLabel("Descrição:"));
+        JTextField campoDescricao = new JTextField();
+        panel.add(campoDescricao);
+
+        telaLancamento.add(panel, BorderLayout.CENTER);
+
+        // botões
+        JPanel botoesPanel = new JPanel();
+        JButton btnSalvar = new JButton("Salvar");
+        JButton btnCancelar = new JButton("Cancelar");
+
+        btnSalvar.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if(campoValor.getText().isEmpty() ||
+                        campoCategoria.getSelectedIndex() == 0 ||
+                        campoDescricao.getText().isEmpty() ||
+                        campoData.getText().contains("_")){
+                    JOptionPane.showMessageDialog(null, "Preencha todos os campos!", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if(campoValor.getText().matches("\\d+")){
+
+                    // Tenta converter para LocalDate
+                    DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+                    campoValor.setText(campoValor.getText().replace(',', '.'));
+                    float valor = Float.parseFloat(campoValor.getText());
+
+                    String selecionado = (String) campoCategoria.getSelectedItem();
+
+                    try {
+                        LocalDate dataConvertida = LocalDate.parse(campoData.getText(), formato);
+
+                        if(campoCategoria.getSelectedItem().equals("Receita")){
+                            Main.contaAtiva.depositar(valor, dataConvertida, selecionado, campoDescricao.getText());
+                        } else {
+                            Main.contaAtiva.sacar(valor, dataConvertida, selecionado, campoDescricao.getText());
+                        }
+
+                        telaLancamento.dispose();
+                        SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
+                    } catch (DateTimeParseException ex) {
+                        JOptionPane.showMessageDialog(null, "Data inválida!", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Informe apenas números para Valor!", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        btnCancelar.addActionListener(ev -> {
+
+            telaLancamento.dispose();
+            SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
+        });
+
+        botoesPanel.add(btnSalvar);
+        botoesPanel.add(btnCancelar);
+
+        telaLancamento.add(botoesPanel, BorderLayout.SOUTH);
+
+        telaLancamento.setVisible(true);
+    }
+
+    private void consulta(){
+
+
     }
 }
