@@ -355,7 +355,7 @@ public class TelaPrincipal extends JFrame {
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                         String dataFormatada = dtf.format(transacao.getData());
 
-                        // ✅ Aqui está o tipo formatado
+                        // Aqui está o tipo formatado
                         String tipoFormatado = transacao.getTipo() == 'E' ? "Receita" : "Despesa";
 
                         String transacaoString = dataFormatada + " - " + transacao.getCategoria() + " - " +
