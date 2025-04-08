@@ -19,27 +19,68 @@ public class TelaPrincipal extends JFrame {
 
     public TelaPrincipal() {
         setTitle("Gestão Financeira Pessoal");
-        setSize(500, 350);
+        setSize(500, 400); // Altura ajustada
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Centraliza a janela
 
-        // Criando o painel principal
+        // Painel principal
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        // Criando o título
+        // Título
         JLabel titulo = new JLabel("Gestão Financeira Pessoal", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 20));
         panel.add(titulo, BorderLayout.NORTH);
 
-        String saldo = "Saldo atual: R$" + Main.contaAtiva.getSaldo();
+        // painel Centro
+        JPanel painelCentro = new JPanel();
+        painelCentro.setLayout(new BoxLayout(painelCentro, BoxLayout.Y_AXIS));
 
-        // Exibição do saldo
-        JLabel saldoLabel = new JLabel(saldo, SwingConstants.CENTER);
-        saldoLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-        panel.add(saldoLabel, BorderLayout.CENTER);
+        // Saldo Atual
+        String saldoTexto = String.format("Saldo atual: R$%.2f", Main.contaAtiva.getSaldo());
+        JLabel saldoLabel = new JLabel(saldoTexto, SwingConstants.CENTER);
+        saldoLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        saldoLabel.setOpaque(true);
+        saldoLabel.setBackground(new Color(230, 255, 230)); // verde claro
+        saldoLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        saldoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        saldoLabel.setMaximumSize(new Dimension(400, 40));
+        saldoLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Criando botões
+        painelCentro.add(Box.createVerticalStrut(30)); // espaço acima do saldo
+        painelCentro.add(saldoLabel);
+        painelCentro.add(Box.createVerticalStrut(15)); // espaço abaixo do saldo
+
+        // Calculo Receitas-Despesas
+        float totalReceitas = 0f;
+        float totalDespesas = 0f;
+
+        for (Transacao t : Main.contaAtiva.getExtrato()) {
+            if (t.getTipo() == 'E') {
+                totalReceitas += t.getValor();
+            } else if (t.getTipo() == 'S') {
+                totalDespesas += t.getValor();
+            }
+        }
+
+        // Painel Lucros-Gastos
+        JPanel painelLucrosGastos = new JPanel(new GridLayout(1, 2, 10, 0));
+        JLabel labelLucros = new JLabel(String.format("Lucros: R$%.2f", totalReceitas), SwingConstants.CENTER);
+        JLabel labelGastos = new JLabel(String.format("Gastos: R$%.2f", totalDespesas), SwingConstants.CENTER);
+
+        labelLucros.setFont(new Font("Arial", Font.PLAIN, 16));
+        labelLucros.setForeground(new Color(0, 130, 0)); // verde escuro
+        labelGastos.setFont(new Font("Arial", Font.PLAIN, 16));
+        labelGastos.setForeground(new Color(200, 0, 0)); // vermelho escuro
+
+        painelLucrosGastos.setMaximumSize(new Dimension(400, 30));
+        painelCentro.add(painelLucrosGastos);
+        painelLucrosGastos.add(labelLucros);
+        painelLucrosGastos.add(labelGastos);
+
+        panel.add(painelCentro, BorderLayout.CENTER);
+
+        //Botões
         JPanel panelBotao = new JPanel(new GridLayout(1, 4, 10, 0));
         JButton btnAdicionar = criarBotao("Adicionar Transação", new Color(0, 168, 107));
         JButton btnConsulta = criarBotao("Consultar", new Color(0, 120, 215));
@@ -53,32 +94,29 @@ public class TelaPrincipal extends JFrame {
         panel.add(panelBotao, BorderLayout.SOUTH);
 
         btnAdicionar.addActionListener(e -> {
-
             novaTransacao();
+            dispose();
         });
 
         btnConsulta.addActionListener(e -> {
-
             consulta();
+            dispose();
         });
 
         btnCategorias.addActionListener(e -> {
-
             categorias();
         });
 
-        btnSair.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Main.contaAtiva = null;
-                dispose();
-                SwingUtilities.invokeLater(() -> new Login().setVisible(true));
-            }
+        btnSair.addActionListener(e -> {
+            Main.contaAtiva = null;
+            dispose();
+            SwingUtilities.invokeLater(() -> new Login().setVisible(true));
         });
 
-        // Adicionando o painel principal à janela
         add(panel);
     }
+
+
 
     private JButton criarBotao(String texto, Color cor) {
         JButton botao = new JButton(texto);
@@ -191,7 +229,7 @@ public class TelaPrincipal extends JFrame {
                     try {
                         LocalDate dataConvertida = LocalDate.parse(campoData.getText(), formato);
 
-                        if(campoCategoria.getSelectedItem().equals("Receita")){
+                        if(campoTipo.getSelectedItem().equals("Receita")){
                             Main.contaAtiva.depositar(valor, dataConvertida, selecionado, campoDescricao.getText());
                         } else {
                             Main.contaAtiva.sacar(valor, dataConvertida, selecionado, campoDescricao.getText());
@@ -214,8 +252,8 @@ public class TelaPrincipal extends JFrame {
         });
 
         btnCancelar.addActionListener(ev -> {
-
             telaLancamento.dispose();
+            SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
         });
 
         botoesPanel.add(btnSalvar);
@@ -261,12 +299,21 @@ public class TelaPrincipal extends JFrame {
         JLabel tipoLabel = new JLabel("Tipo:");
         JComboBox<String> tipoCombo = new JComboBox<>(new String[]{"Todos", "Receita", "Despesa"});
 
+        JLabel LabelCategoria = new JLabel("Categoria:");
+        List<String> categoriasConsulta = new ArrayList<>();
+        categoriasConsulta.add("Todas"); // Adiciona somente na tela de consulta
+        categoriasConsulta.addAll(Main.contaAtiva.getCategorias());
+        JComboBox<String> campoCategoria = new JComboBox<String>(categoriasConsulta.toArray(new String[0]));
+        panel.add(campoCategoria);
+
         filtrosPanel.add(new JLabel("Data inicial:"));
         filtrosPanel.add(campoDataFiltroInicial);
         filtrosPanel.add(new JLabel("Data final:"));
         filtrosPanel.add(campoDataFiltroFinal);
         filtrosPanel.add(tipoLabel);
         filtrosPanel.add(tipoCombo);
+        filtrosPanel.add(LabelCategoria);
+        filtrosPanel.add(campoCategoria);
 
         // Área de texto para resultados
         JTextArea resultadoArea = new JTextArea();
@@ -277,12 +324,13 @@ public class TelaPrincipal extends JFrame {
         JButton consultarButton = criarBotao("Consultar", new Color(0, 120, 215));
         consultarButton.addActionListener(e -> {
             try {
-
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate inicio = campoDataFiltroInicial.getText().isEmpty() ? LocalDate.MIN : LocalDate.parse(campoDataFiltroInicial.getText(), formatter);
                 LocalDate fim = campoDataFiltroFinal.getText().isEmpty() ? LocalDate.MAX : LocalDate.parse(campoDataFiltroFinal.getText(), formatter);
 
                 String tipoSelecionado = (String) tipoCombo.getSelectedItem();
+                String categoriaSelecionada = (String) campoCategoria.getSelectedItem();
+
                 List<Character> tipos = new ArrayList<>();
                 if (tipoSelecionado.equals("Todos") || tipoSelecionado.equals("Receita")) {
                     tipos.add('E');
@@ -291,19 +339,27 @@ public class TelaPrincipal extends JFrame {
                     tipos.add('S');
                 }
 
-                resultadoArea.setText("Data | Categoria | Descrição | Valor\n");
+                resultadoArea.setText("Data | Categoria | Tipo | Descrição | Valor\n");
+
                 for (Transacao transacao : Main.contaAtiva.getExtrato()) {
                     boolean validaData = (transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim))
                             || transacao.getData().equals(inicio)
                             || transacao.getData().equals(fim);
+
                     boolean validaTipo = tipos.contains(transacao.getTipo());
 
-                    if (validaData && validaTipo) {
+                    boolean validaCategoria = categoriaSelecionada.equals("Todas")
+                            || transacao.getCategoria().equalsIgnoreCase(categoriaSelecionada);
 
+                    if (validaData && validaTipo && validaCategoria) {
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                         String dataFormatada = dtf.format(transacao.getData());
 
-                        String transacaoString = dataFormatada + " - " + transacao.getCategoria() + " - " + transacao.getDescricao() + " - R$" + transacao.getValor();
+                        // ✅ Aqui está o tipo formatado
+                        String tipoFormatado = transacao.getTipo() == 'E' ? "Receita" : "Despesa";
+
+                        String transacaoString = dataFormatada + " - " + transacao.getCategoria() + " - " +
+                                tipoFormatado + " - " + transacao.getDescricao() + " - R$" + transacao.getValor();
                         resultadoArea.append(transacaoString + "\n");
                     }
                 }
@@ -312,10 +368,13 @@ public class TelaPrincipal extends JFrame {
             }
         });
 
+
+
         JButton cancelButton = criarBotao("Cancelar", new Color(215, 60, 60));
         cancelButton.addActionListener(e -> {
 
             telaConsulta.dispose();
+            SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
         });
 
         JPanel panelBotao = new JPanel();
@@ -431,6 +490,7 @@ public class TelaPrincipal extends JFrame {
                 JOptionPane.showMessageDialog(this, "Selecione uma categoria para remover", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
         });
+
 
         panelBotao.add(btnAdicionar);
         panelBotao.add(btnEditar);
