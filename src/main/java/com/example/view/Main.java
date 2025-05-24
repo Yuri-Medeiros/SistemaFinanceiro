@@ -1,4 +1,6 @@
-package com.example;
+package com.example.view;
+
+import com.example.model.entity.Conta;
 
 import javax.swing.SwingUtilities;
 import java.util.ArrayList;

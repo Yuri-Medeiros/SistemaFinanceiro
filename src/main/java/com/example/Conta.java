@@ -1,25 +1,21 @@
 package com.example;
 
+import com.example.model.entity.Transacao;
+
 import javax.swing.*;
-import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Conta extends JFrame{
 
-    private float saldo;
-    private final List<Transacao> extrato;
-    private final List<String> categorias;
     private final String login;
     private final String senha;
+    private float saldo;
 
     public Conta(String login, String senha) {
         this.saldo = 0;
-        this.extrato = new ArrayList<>();
-        this.categorias = new ArrayList<>();
         this.login = login;
         this.senha = senha;
     }

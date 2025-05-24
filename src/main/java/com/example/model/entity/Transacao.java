@@ -1,4 +1,4 @@
-package com.example;
+package com.example.model.entity;
 
 import javax.swing.*;
 import java.time.LocalDate;
