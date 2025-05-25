@@ -1,17 +1,21 @@
 package com.example.view;
 
+import com.example.controller.CategoriaController;
+import com.example.controller.TransacaoController;
+
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 public class NovaTransacao extends JFrame {
+
+    private JFormattedTextField campoData = null;
+    private final CategoriaController c = new CategoriaController();
+    private final TransacaoController t = new TransacaoController();
 
     public NovaTransacao() {
 
@@ -65,7 +69,7 @@ public class NovaTransacao extends JFrame {
         JTextField campoDescricao = new JTextField();
         panel.add(campoDescricao);
 
-        telaLancamento.add(panel, BorderLayout.CENTER);
+        add(panel, BorderLayout.CENTER);
 
         // botões
         JPanel botoesPanel = new JPanel();
@@ -80,73 +84,28 @@ public class NovaTransacao extends JFrame {
         btnCancelar.setBackground(new Color(215, 60, 60));
         btnCancelar.setForeground(Color.white);
 
-        btnSalvar.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                if(campoValor.getText().isEmpty() ||
-                        campoTipo.getSelectedIndex() == 0 ||
-                        campoCategoria.getSelectedItem().equals("") ||
-                        campoDescricao.getText().isEmpty() ||
-                        campoData.getText().contains("_")){
-
-                    if(Main.contaAtiva.getCategorias().isEmpty()) {
-
-                        JOptionPane.showMessageDialog(null, "Não há categorias cadastrada. Adicionar uma categoria!");
-                        categorias();
-                        return;
-                    }
-
-                    JOptionPane.showMessageDialog(null, "Preencha todos os campos!", "Erro", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                if(campoValor.getText().matches("\\d+")){
-
-                    // Tenta converter para LocalDate
-                    DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-                    campoValor.setText(campoValor.getText().replace(',', '.'));
-                    float valor = Float.parseFloat(campoValor.getText());
-
-                    String selecionado = (String) campoCategoria.getSelectedItem();
-
-                    try {
-                        LocalDate dataConvertida = LocalDate.parse(campoData.getText(), formato);
-
-                        if(campoCategoria.getSelectedItem().equals("Receita")){
-                            Main.contaAtiva.depositar(valor, dataConvertida, selecionado, campoDescricao.getText());
-                        } else {
-                            Main.contaAtiva.sacar(valor, dataConvertida, selecionado, campoDescricao.getText());
-                        }
-
-                        JOptionPane.showMessageDialog(null,
-                                "Transação adicionada com sucesso!",
-                                "Sucesso",
-                                JOptionPane.INFORMATION_MESSAGE);
-
-                        telaLancamento.dispose();
-                        SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
-                    } catch (DateTimeParseException ex) {
-                        JOptionPane.showMessageDialog(null, "Data inválida!", "Erro", JOptionPane.ERROR_MESSAGE);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Informe apenas números para Valor!", "Erro", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+        btnSalvar.addActionListener(e -> {t.adicionarTransacao(
+                campoValor.getText().toLowerCase().trim(),
+                (String) campoCategoria.getSelectedItem(),
+                campoDescricao.getText().toLowerCase().trim(),
+                (String) campoTipo.getSelectedItem(),
+                campoData.getText().toLowerCase().trim(),
+                this);});
 
         btnCancelar.addActionListener(ev -> {
 
-            telaLancamento.dispose();
+            dispose();
         });
 
         botoesPanel.add(btnSalvar);
         botoesPanel.add(btnCancelar);
 
-        telaLancamento.add(botoesPanel, BorderLayout.SOUTH);
+        add(botoesPanel, BorderLayout.SOUTH);
 
-        telaLancamento.setVisible(true);
+        if(Main.contaAtiva.getCategorias().isEmpty()) {
+
+            JOptionPane.showMessageDialog(null, "Não há categorias cadastrada. Adicionar uma categoria!");
+            SwingUtilities.invokeLater(() -> new GerenciaCategorias().setVisible(true));
+        }
     }
 }

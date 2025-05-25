@@ -2,11 +2,12 @@ package com.example.model.dao;
 
 import com.example.model.entity.Conta;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import static com.example.util.HibernateUtil.getFactory;
 
 public interface ContaDAO {
-    SessionFactory factory = new Configuration().configure().buildSessionFactory();
 
-    public void logar(String login, String senha);
-    public boolean salvar(Conta conta);
+    SessionFactory factory = getFactory();
+
+    void logar(String login, String senha);
+    boolean salvar(Conta conta);
 }

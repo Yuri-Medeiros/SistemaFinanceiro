@@ -2,19 +2,25 @@ package com.example.controller;
 
 import com.example.model.dao.ContaDAO;
 import com.example.model.entity.Conta;
+import com.example.model.entity.Transacao;
 import com.example.model.impl.ContaSQLite;
 import com.example.view.Cadastro;
 import com.example.view.Login;
+import com.example.view.Main;
 import com.example.view.TelaPrincipal;
 import org.hibernate.exception.ConstraintViolationException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContaController extends JFrame {
 
-    ContaDAO SQLite = new ContaSQLite();
+    final ContaDAO SQLite = new ContaSQLite();
 
     //Verifica se o login ja existe no banco de dados
     public ActionListener cadastrar(String login, String senha, String confSenha, Cadastro view) {
@@ -76,5 +82,46 @@ public class ContaController extends JFrame {
                 }
             }
         };
+    }
+
+    public void exibirExtrato(
+            String dataInicio,
+            String dataFinal,
+            String tipo,
+            JTextArea resultadoArea) {
+
+        try {
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate inicio = dataInicio.isEmpty() ? LocalDate.MIN : LocalDate.parse(dataInicio, formatter);
+            LocalDate fim = dataFinal.isEmpty() ? LocalDate.MAX : LocalDate.parse(dataFinal, formatter);
+
+            List<Character> tipos = new ArrayList<>();
+            if (tipo.equals("Todos") || tipo.equals("Receita")) {
+                tipos.add('E');
+            }
+            if (tipo.equals("Todos") || tipo.equals("Despesa")) {
+                tipos.add('S');
+            }
+
+            resultadoArea.setText("Data | Categoria | Descrição | Valor\n");
+            for (Transacao transacao : Main.contaAtiva.getTransacoes()) {
+                boolean validaData = (transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim))
+                        || transacao.getData().equals(inicio)
+                        || transacao.getData().equals(fim);
+                boolean validaTipo = tipos.contains(transacao.getTipo());
+
+                if (validaData && validaTipo) {
+
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    String dataFormatada = dtf.format(transacao.getData());
+
+                    String transacaoString = dataFormatada + " - " + transacao.getCategoria() + " - " + transacao.getDescricao() + " - R$" + transacao.getValor();
+                    resultadoArea.append(transacaoString + "\n");
+                }
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Erro na consulta: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
