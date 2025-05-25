@@ -5,6 +5,7 @@ import com.example.model.entity.Categoria;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 import static com.example.util.CriarBotao.criarBotao;
 
@@ -28,8 +29,21 @@ public class GerenciaCategorias extends JFrame {
 
         //Cria lista de categorias para exibição
         //TODO: Adicionar categorias
-        JList<String> categorias = new JList<>();
+        ArrayList<Categoria> dbCategorias = new ArrayList<Categoria>();
         DefaultListModel<String> listModel = new DefaultListModel<>();
+        for (Categoria categoria : dbCategorias) {
+            listModel.addElement(categoria.toString());
+        }
+
+        JList<String> categorias = new JList<>();
+        categorias.setModel(listModel);
+        categorias.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        categorias.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {  // Garante que só captura após final da seleção
+                String selecionado = categorias.getSelectedValue();
+                System.out.println("Selecionado: " + selecionado);
+            }
+        });
 
         //Cria e configura botão de adicionar
         JButton btnAdicionar = criarBotao("Adicionar", new Color(0, 168, 107));
@@ -50,6 +64,12 @@ public class GerenciaCategorias extends JFrame {
 
         //Cria painel de exibição de categorias
         JScrollPane scrollPane = new JScrollPane(categorias);
+        categorias.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {  // Garante que só captura após final da seleção
+                String selecionado = categorias.getSelectedValue();
+                System.out.println("Selecionado: " + selecionado);
+            }
+        });
 
         //Adiciona paineis ao frame principal
         panel.add(scrollPane, BorderLayout.CENTER);

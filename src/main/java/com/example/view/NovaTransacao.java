@@ -2,20 +2,21 @@ package com.example.view;
 
 import com.example.controller.CategoriaController;
 import com.example.controller.TransacaoController;
+import com.example.model.entity.Categoria;
+import com.example.model.impl.ContaSQLite;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.List;
 import java.text.ParseException;
-import java.util.ArrayList;
 
 public class NovaTransacao extends JFrame {
 
     private JFormattedTextField campoData = null;
-    private final CategoriaController c = new CategoriaController();
+    private final CategoriaController g = new CategoriaController();
     private final TransacaoController t = new TransacaoController();
+    private final ContaSQLite SQLite = new ContaSQLite();
 
     public NovaTransacao() {
 
@@ -41,12 +42,12 @@ public class NovaTransacao extends JFrame {
         JComboBox<String> campoTipo = new JComboBox<String>(new String[]{"", "Receita", "Despesa"});
         panel.add(campoTipo);
 
-        ArrayList<String> categorias = new ArrayList<>();
+        List<Categoria> categorias = SQLite.getCategorias(Main.contaAtiva);
 
         panel.add(new JLabel("Categoria:"));
         JComboBox<String> campoCategoria = new JComboBox<String>();
-        for (String categoria : categorias) {
-            campoCategoria.addItem(categoria);
+        for (Categoria categoria : categorias) {
+            campoCategoria.addItem(categoria.toString());
         }
         panel.add(campoCategoria);
 
@@ -102,7 +103,7 @@ public class NovaTransacao extends JFrame {
 
         add(botoesPanel, BorderLayout.SOUTH);
 
-        if(Main.contaAtiva.getCategorias().isEmpty()) {
+        if(SQLite.getCategorias(Main.contaAtiva).isEmpty()) {
 
             JOptionPane.showMessageDialog(null, "Não há categorias cadastrada. Adicionar uma categoria!");
             SwingUtilities.invokeLater(() -> new GerenciaCategorias().setVisible(true));

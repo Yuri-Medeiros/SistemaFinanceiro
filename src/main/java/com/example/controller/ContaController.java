@@ -105,7 +105,7 @@ public class ContaController extends JFrame {
             }
 
             resultadoArea.setText("Data | Categoria | Descrição | Valor\n");
-            for (Transacao transacao : Main.contaAtiva.getTransacoes()) {
+            for (Transacao transacao : SQLite.getTransacoes(Main.contaAtiva)) {
                 boolean validaData = (transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim))
                         || transacao.getData().equals(inicio)
                         || transacao.getData().equals(fim);

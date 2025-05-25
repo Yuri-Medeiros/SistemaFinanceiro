@@ -54,11 +54,7 @@ public class CategoriaController extends JFrame {
 
     }
 
-    public void editarCategoria(
-            Categoria categoria,
-            GerenciaCategorias view) {
-
-        int selectedIndex = categorias.getSelectedIndex();
+    public void editarCategoria(GerenciaCategorias view) {
 
         if (selectedIndex != -1) {
 

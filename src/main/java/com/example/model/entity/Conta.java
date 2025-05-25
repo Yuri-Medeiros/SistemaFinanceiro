@@ -30,15 +30,7 @@ public class Conta {
 
     public Conta() {}
 
-    public float getSaldo() {
-        return saldo;
-    }
-
-    public List<Transacao> getTransacoes() {
-        return new ArrayList<>();
-    }
-
-    public List<Categoria> getCategorias() {
-        return new ArrayList<>();
+    public int getId() {
+        return id;
     }
 }

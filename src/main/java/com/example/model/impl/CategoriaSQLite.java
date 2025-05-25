@@ -62,7 +62,8 @@ public class CategoriaSQLite implements CategoriaDAO {
 
         try (Session session = factory.openSession()) {
             tx = session.beginTransaction();
-            session.persist(conta);
+
+            session.remove(categoria);
             tx.commit();
 
         } catch (ConstraintViolationException e) {

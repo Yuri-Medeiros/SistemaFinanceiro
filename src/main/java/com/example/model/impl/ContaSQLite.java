@@ -1,7 +1,9 @@
 package com.example.model.impl;
 
 import com.example.model.dao.ContaDAO;
+import com.example.model.entity.Categoria;
 import com.example.model.entity.Conta;
+import com.example.model.entity.Transacao;
 import com.example.view.Main;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -14,6 +16,7 @@ public class ContaSQLite implements ContaDAO {
 
     @Override
     public void logar(String login, String senha){
+
         Transaction tx = null;
 
         try (Session session = factory.openSession()) {
@@ -51,5 +54,45 @@ public class ContaSQLite implements ContaDAO {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<Categoria> getCategorias(Conta conta) {
+
+        Transaction tx = null;
+
+        try (Session session = factory.openSession()) {
+
+            List<Categoria> categorias = session.createQuery(
+                            "from Categoria where conta = :conta", Categoria.class)
+                    .setParameter("conta", conta)
+                    .list();
+
+            if (categorias.isEmpty()) {
+                throw new  IllegalArgumentException("Não possui categorias");
+            }
+
+            return categorias;
+        }
+    }
+
+    @Override
+    public List<Transacao> getTransacoes(Conta conta) {
+
+        Transaction tx = null;
+
+        try (Session session = factory.openSession()) {
+
+            List<Transacao> transacaos = session.createQuery(
+                            "from Transacao where conta = :conta", Transacao.class)
+                    .setParameter("conta", conta)
+                    .list();
+
+            if (transacaos.isEmpty()) {
+                throw new  IllegalArgumentException("Não possui transacoes");
+            }
+
+            return transacaos;
+        }
     }
 }
