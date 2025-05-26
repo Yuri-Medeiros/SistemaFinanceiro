@@ -25,8 +25,7 @@ public class Categoria {
         this.categoria = categoria;
     }
 
-    @Override
-    public String toString() {
+    public String getCategoria() {
         return categoria;
     }
 }

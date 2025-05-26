@@ -1,5 +1,8 @@
 package com.example.controller;
 
+import com.example.model.entity.Transacao;
+import com.example.model.impl.TransacaoSQLite;
+import com.example.view.Main;
 import com.example.view.NovaTransacao;
 import com.example.view.TelaPrincipal;
 
@@ -9,6 +12,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class TransacaoController {
+
+    private final TransacaoSQLite SQLite = new TransacaoSQLite();
 
     public void adicionarTransacao(String valor,
                                    String categoria,
@@ -39,11 +44,17 @@ public class TransacaoController {
             try {
                 LocalDate dataConvertida = LocalDate.parse(data, formato);
 
+                Transacao transacao = new Transacao(
+
+                );
+
                 if(tipo.equals("Receita")){
-                    //TODO: depositar
+                    Main.contaAtiva.depositar(valorFormatted);
                 } else {
-                    //TODO: sacar
+                    Main.contaAtiva.sacar(valorFormatted);
                 }
+
+                SQLite.salvar(transacao);
 
                 JOptionPane.showMessageDialog(null,
                         "Transação adicionada com sucesso!",

@@ -10,8 +10,6 @@ import static com.example.util.CriarBotao.criarBotao;
 
 public class TelaPrincipal extends JFrame {
 
-    private final TransacaoController t = new TransacaoController();
-
     public TelaPrincipal() {
 
         //Configurações basicas do frame principal

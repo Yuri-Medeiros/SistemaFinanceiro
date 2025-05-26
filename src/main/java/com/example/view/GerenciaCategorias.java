@@ -2,10 +2,11 @@ package com.example.view;
 
 import com.example.controller.CategoriaController;
 import com.example.model.entity.Categoria;
+import com.example.model.impl.ContaSQLite;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.util.CriarBotao.criarBotao;
 
@@ -28,11 +29,11 @@ public class GerenciaCategorias extends JFrame {
         JPanel panelBotao = new JPanel();
 
         //Cria lista de categorias para exibição
-        //TODO: Adicionar categorias
-        ArrayList<Categoria> dbCategorias = new ArrayList<Categoria>();
+        ContaSQLite SQLite = new ContaSQLite();
+        List<Categoria> dbCategorias = SQLite.getCategorias(Main.contaAtiva);
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (Categoria categoria : dbCategorias) {
-            listModel.addElement(categoria.toString());
+            listModel.addElement(categoria.getCategoria());
         }
 
         JList<String> categorias = new JList<>();

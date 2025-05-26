@@ -16,43 +16,46 @@ public class NovaTransacao extends JFrame {
     private JFormattedTextField campoData = null;
     private final CategoriaController g = new CategoriaController();
     private final TransacaoController t = new TransacaoController();
-    private final ContaSQLite SQLite = new ContaSQLite();
 
     public NovaTransacao() {
 
+        //Configurações basicas da tela principal
         setTitle("Gestão Financeira - Adicionar Transação");
         setSize(400, 300);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // título
+        //Insere o titulo do frame principal
         JLabel titulo = new JLabel("Adicionar Nova Transação", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 18));
         add(titulo, BorderLayout.NORTH);
 
-        // formulário
+        //Cria formulario
         JPanel panel = new JPanel(new GridLayout(8, 2, 5, 5));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        //Insere campo de valor
         panel.add(new JLabel("Valor: (Apenas números e separe por .)"));
         JTextField campoValor = new JTextField();
         panel.add(campoValor);
 
+        //Insere campo de tipo
         panel.add(new JLabel("tipo:"));
         JComboBox<String> campoTipo = new JComboBox<String>(new String[]{"", "Receita", "Despesa"});
         panel.add(campoTipo);
 
+        //Obtem categorias e insere campo
+        ContaSQLite SQLite = new ContaSQLite();
         List<Categoria> categorias = SQLite.getCategorias(Main.contaAtiva);
-
         panel.add(new JLabel("Categoria:"));
         JComboBox<String> campoCategoria = new JComboBox<String>();
         for (Categoria categoria : categorias) {
-            campoCategoria.addItem(categoria.toString());
+            campoCategoria.addItem(categoria.getCategoria());
         }
         panel.add(campoCategoria);
 
+        //Insere campos de data
         panel.add(new JLabel("Data:"));
-
         try {
             MaskFormatter mascaraData = new MaskFormatter("##/##/####");
             mascaraData.setPlaceholderCharacter('_');
@@ -66,25 +69,21 @@ public class NovaTransacao extends JFrame {
             return;
         }
 
+        //Insere campo de descrição
         panel.add(new JLabel("Descrição:"));
         JTextField campoDescricao = new JTextField();
         panel.add(campoDescricao);
 
+        //Adiciona formulario a tela principal
         add(panel, BorderLayout.CENTER);
 
-        // botões
+        //Cria painel de botões
         JPanel botoesPanel = new JPanel();
 
-        //Cria botão de salvar
+        //Cria e configura botão de salvar
         JButton btnSalvar = new JButton("Salvar");
         btnSalvar.setBackground(new Color(0, 168, 107));
         btnSalvar.setForeground(Color.white);
-
-        //Cria botão de cancelar
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.setBackground(new Color(215, 60, 60));
-        btnCancelar.setForeground(Color.white);
-
         btnSalvar.addActionListener(e -> {t.adicionarTransacao(
                 campoValor.getText().toLowerCase().trim(),
                 (String) campoCategoria.getSelectedItem(),
@@ -93,17 +92,22 @@ public class NovaTransacao extends JFrame {
                 campoData.getText().toLowerCase().trim(),
                 this);});
 
+        //Cria e configura botão de cancelar
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setBackground(new Color(215, 60, 60));
+        btnCancelar.setForeground(Color.white);
         btnCancelar.addActionListener(ev -> {
 
             dispose();
         });
 
+        //Adiciona botões no painel e painel na tela principal
         botoesPanel.add(btnSalvar);
         botoesPanel.add(btnCancelar);
-
         add(botoesPanel, BorderLayout.SOUTH);
 
-        if(SQLite.getCategorias(Main.contaAtiva).isEmpty()) {
+        //Verifica se não há categorias cadastrada e abre gerenciamento de categorias
+        if(categorias.isEmpty()) {
 
             JOptionPane.showMessageDialog(null, "Não há categorias cadastrada. Adicionar uma categoria!");
             SwingUtilities.invokeLater(() -> new GerenciaCategorias().setVisible(true));

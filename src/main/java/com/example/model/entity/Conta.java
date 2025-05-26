@@ -22,15 +22,23 @@ public class Conta {
     @Column(nullable = false)
     private float saldo;
 
+    public Conta() {}
+
     public Conta(String login, String senha) {
         this.login = login;
         this.senha = senha;
         this.saldo = 0;
     }
 
-    public Conta() {}
+    public float getSaldo() {
+        return saldo;
+    }
 
-    public int getId() {
-        return id;
+    public void depositar(float valor) {
+        this.saldo += valor;
+    }
+
+    public void sacar(float valor) {
+        this.saldo -= valor;
     }
 }
