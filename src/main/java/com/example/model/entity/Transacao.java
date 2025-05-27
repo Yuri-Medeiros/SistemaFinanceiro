@@ -1,9 +1,8 @@
 package com.example.model.entity;
 
-import com.example.view.Main;
+import com.example.Main;
 import jakarta.persistence.*;
 
-import javax.swing.*;
 import java.time.LocalDate;
 
 @Entity
@@ -12,10 +11,10 @@ public class Transacao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int id_transacao;
 
     @Column(nullable = false)
-    private Character tipo;
+    private String tipo;
 
     @Column(nullable = false)
     private float valor;
@@ -30,12 +29,12 @@ public class Transacao {
     private LocalDate data;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "id_conta", nullable = false)
     private Conta conta;
 
     public Transacao() {}
 
-    public Transacao(float valor, String categoria, String descricao, LocalDate data, Character tipo) {
+    public Transacao(float valor, String categoria, String descricao, LocalDate data, String tipo) {
         this.tipo = tipo;
         this.valor = valor;
         this.categoria = categoria;
@@ -44,7 +43,7 @@ public class Transacao {
         this.conta = Main.contaAtiva;
     }
 
-    public Character getTipo() {
+    public String getTipo() {
         return tipo;
     }
 

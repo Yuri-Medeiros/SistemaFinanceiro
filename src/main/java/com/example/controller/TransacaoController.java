@@ -2,7 +2,7 @@ package com.example.controller;
 
 import com.example.model.entity.Transacao;
 import com.example.model.impl.TransacaoSQLite;
-import com.example.view.Main;
+import com.example.Main;
 import com.example.view.NovaTransacao;
 import com.example.view.TelaPrincipal;
 
@@ -15,6 +15,7 @@ public class TransacaoController {
 
     private final TransacaoSQLite SQLite = new TransacaoSQLite();
 
+    //Valida os dados e registra uma transação
     public void adicionarTransacao(String valor,
                                    String categoria,
                                    String descricao,
@@ -22,53 +23,67 @@ public class TransacaoController {
                                    String data,
                                    NovaTransacao view) {
 
+        //Verifica se todos os valores são validos
         if(valor.isEmpty() ||
                 tipo.isEmpty() ||
                 categoria.isEmpty() ||
                 descricao.isEmpty() ||
                 data.contains("_")){
 
+            //Emiti erro para campos não preenchidos
             JOptionPane.showMessageDialog(null, "Preencha todos os campos!", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        if(valor.matches("\\d+")){
+        //Verifica se o valor é valido
+        if(!valor.matches("\\d+")){
+            JOptionPane.showMessageDialog(null, "Informe apenas números para Valor!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
 
+        }
+
+        //Converte valor para real
+        String aux = valor.replace(',', '.');
+        float valorFormatted = Float.parseFloat(aux);
+
+        try {
             // Tenta converter para LocalDate
             DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate dataConvertida = LocalDate.parse(data, formato);
 
-            //Converte valor para real
-            String aux = valor.replace(',', '.');
-            float valorFormatted = Float.parseFloat(aux);
+            //Instancia uma entidade transação
+            Transacao transacao = new Transacao(valorFormatted,
+                    categoria,
+                    descricao,
+                    dataConvertida,
+                    tipo);
 
-            try {
-                LocalDate dataConvertida = LocalDate.parse(data, formato);
+            //Tenta registrar a transação
+            if (!SQLite.salvar(transacao)) {
 
-                Transacao transacao = new Transacao(
-
-                );
-
-                if(tipo.equals("Receita")){
-                    Main.contaAtiva.depositar(valorFormatted);
-                } else {
-                    Main.contaAtiva.sacar(valorFormatted);
-                }
-
-                SQLite.salvar(transacao);
-
-                JOptionPane.showMessageDialog(null,
-                        "Transação adicionada com sucesso!",
-                        "Sucesso",
-                        JOptionPane.INFORMATION_MESSAGE);
-
-                view.dispose();
-                SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
-
-            } catch (DateTimeParseException ex) {
-                JOptionPane.showMessageDialog(null, "Data inválida!", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Não foi possivel salvar sa transação. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Informe apenas números para Valor!", "Erro", JOptionPane.ERROR_MESSAGE);
+
+            //Altera o saldo da conta
+            if(tipo.equals("Receita")){
+                Main.contaAtiva.depositar(valorFormatted);
+            } else {
+                Main.contaAtiva.sacar(valorFormatted);
+            }
+
+            //Confirma transação para usuario
+            JOptionPane.showMessageDialog(null,
+                    "Transação adicionada com sucesso!",
+                    "Sucesso",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            //volta ao menu principal
+            view.dispose();
+            SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
+
+        } catch (DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(null, "Data inválida!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

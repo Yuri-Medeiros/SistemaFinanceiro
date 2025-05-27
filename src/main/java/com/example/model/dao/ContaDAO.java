@@ -15,6 +15,6 @@ public interface ContaDAO {
 
     void logar(String login, String senha);
     boolean salvar(Conta conta);
-    List<Categoria> getCategorias(Conta conta);
-    List<Transacao> getTransacoes(Conta conta);
+    List<Categoria> getCategorias();
+    List<Transacao> getTransacoes();
 }

@@ -11,7 +11,7 @@ public class Conta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int id_conta;
 
     @Column(nullable = false, unique = true)
     private String login;

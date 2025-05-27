@@ -6,13 +6,10 @@ import com.example.model.entity.Transacao;
 import com.example.model.impl.ContaSQLite;
 import com.example.view.Cadastro;
 import com.example.view.Login;
-import com.example.view.Main;
 import com.example.view.TelaPrincipal;
 import org.hibernate.exception.ConstraintViolationException;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,68 +17,66 @@ import java.util.List;
 
 public class ContaController extends JFrame {
 
-    final ContaDAO SQLite = new ContaSQLite();
+    final ContaDAO contaSQLite = new ContaSQLite();
 
-    //Verifica se o login ja existe no banco de dados
-    public ActionListener cadastrar(String login, String senha, String confSenha, Cadastro view) {
-        return new ActionListener() {
+    //Verifica informações de cadastro e tenta salvar no banco de dados
+    public void cadastrar(String login, String senha, String confSenha, Cadastro view) {
 
-            //Armazena o Cadastro
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        //Exibe mensagens de erros
+        if (login.isEmpty() || senha.isEmpty() || confSenha.isEmpty()) {
+            JOptionPane.showMessageDialog(ContaController.this, "Preencha todos os campos", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
 
-                if (login.isEmpty() || senha.isEmpty() || confSenha.isEmpty()) {
-                    JOptionPane.showMessageDialog(ContaController.this, "Preencha todos os campos", "Erro", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+        } else if (!senha.equals(confSenha)) {
+            JOptionPane.showMessageDialog(ContaController.this, "Senhas não conferem", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-                if (!senha.equals(confSenha)) {
-                    JOptionPane.showMessageDialog(ContaController.this, "Senhas não conferem", "Erro", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+        try {
 
-                //Verifica se o Login ja existe
-                try {
+            //Instancia uma entidade conta
+            Conta conta = new Conta(login, senha);
 
-                    Conta conta = new Conta(login, senha);
-
-                    if (!SQLite.salvar(conta)) {
-                        JOptionPane.showMessageDialog(ContaController.this, "Não foi possivel cadastrar a conta. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                    view.dispose();
-                } catch (ConstraintViolationException ex){
-                    //Exibe erro caso Login ja exista
-                    JOptionPane.showMessageDialog(ContaController.this, "Usuário ja existe! Escolha outro", "Erro", JOptionPane.ERROR_MESSAGE);
-                }
+            //Tenta salvar no banco de dados
+            if (!contaSQLite.salvar(conta)) {
+                JOptionPane.showMessageDialog(ContaController.this, "Não foi possivel cadastrar a conta. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-        };
+
+            //Se concluido, fecha a tela de cadastro
+            view.dispose();
+
+        //Exibe erro caso Login ja exista
+        } catch (ConstraintViolationException ex){
+            JOptionPane.showMessageDialog(ContaController.this, "Usuário ja existe! Escolha outro", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    public ActionListener logar(String login, String senha, Login view) {
-        return new ActionListener() {
+    //Verifica informações de login com consulta em banco de dados
+    public void logar(String login, String senha, Login view) {
 
-            //Função executada pós acionamento do botão de login
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        try {
 
-                //Verifica informações
-                try {
-
-                    SQLite.logar(login, senha);
-
-                    //Fecha a tela e abre cadastro
-                    view.dispose();
-                    SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
-
-                } catch (IllegalArgumentException ex) {
-                    //Se false, exibe mensagem de erro
-                    JOptionPane.showMessageDialog(ContaController.this, "Usuário ou senha incorretos!", "Erro", JOptionPane.ERROR_MESSAGE);
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(ContaController.this, "Não foi possivel se conectar. Tenta novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
-                }
+            //Verifica se os campos estão preenchidos
+            if (login.isEmpty() || senha.isEmpty()) {
+                JOptionPane.showMessageDialog(ContaController.this, "Insira login e senha!", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-        };
+
+            //Faz a consulta do login e senha no banco de dados
+            contaSQLite.logar(login, senha);
+
+            //Acessa o menu principal
+            view.dispose();
+            SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
+
+            //Levanta erro para caso não encontre o email com a senha
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(ContaController.this, "Usuário ou senha incorretos!", "Erro", JOptionPane.ERROR_MESSAGE);
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(ContaController.this, "Não foi possivel se conectar. Tenta novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void exibirExtrato(
@@ -96,16 +91,16 @@ public class ContaController extends JFrame {
             LocalDate inicio = dataInicio.isEmpty() ? LocalDate.MIN : LocalDate.parse(dataInicio, formatter);
             LocalDate fim = dataFinal.isEmpty() ? LocalDate.MAX : LocalDate.parse(dataFinal, formatter);
 
-            List<Character> tipos = new ArrayList<>();
+            List<String> tipos = new ArrayList<>();
             if (tipo.equals("Todos") || tipo.equals("Receita")) {
-                tipos.add('E');
+                tipos.add("Entrada");
             }
             if (tipo.equals("Todos") || tipo.equals("Despesa")) {
-                tipos.add('S');
+                tipos.add("Saida");
             }
 
             resultadoArea.setText("Data | Categoria | Descrição | Valor\n");
-            for (Transacao transacao : SQLite.getTransacoes(Main.contaAtiva)) {
+            for (Transacao transacao : contaSQLite.getTransacoes()) {
                 boolean validaData = (transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim))
                         || transacao.getData().equals(inicio)
                         || transacao.getData().equals(fim);

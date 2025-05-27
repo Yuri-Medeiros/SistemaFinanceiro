@@ -30,51 +30,41 @@ public class GerenciaCategorias extends JFrame {
 
         //Cria lista de categorias para exibição
         ContaSQLite SQLite = new ContaSQLite();
-        List<Categoria> dbCategorias = SQLite.getCategorias(Main.contaAtiva);
+        List<Categoria> dbCategorias = SQLite.getCategorias();
+
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (Categoria categoria : dbCategorias) {
             listModel.addElement(categoria.getCategoria());
         }
 
+        //Configura o campo de categorias
         JList<String> categorias = new JList<>();
         categorias.setModel(listModel);
         categorias.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        categorias.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {  // Garante que só captura após final da seleção
-                String selecionado = categorias.getSelectedValue();
-                System.out.println("Selecionado: " + selecionado);
-            }
-        });
+        JScrollPane scrollPane = new JScrollPane(categorias);
 
-        //Cria e configura botão de adicionar
+        //Cria botões
         JButton btnAdicionar = criarBotao("Adicionar", new Color(0, 168, 107));
-        btnAdicionar.addActionListener(e -> c.cadastrarCategoria(this));
-
-        //Cria e configura botão de editar
         JButton btnEditar = criarBotao("Editar", new Color(0, 120, 215));
-        btnEditar.addActionListener(er -> c.editarCategoria(this));
-
-        //Cria e configura botão de remover
         JButton btnRemover = criarBotao("Remover", new Color(215, 60, 60));
-        btnRemover.addActionListener(err -> c.excluirCategoria(this));
 
         //Adiciona botões ao painel de botões
         panelBotao.add(btnAdicionar);
         panelBotao.add(btnEditar);
         panelBotao.add(btnRemover);
 
-        //Cria painel de exibição de categorias
-        JScrollPane scrollPane = new JScrollPane(categorias);
-        categorias.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {  // Garante que só captura após final da seleção
-                String selecionado = categorias.getSelectedValue();
-                System.out.println("Selecionado: " + selecionado);
-            }
-        });
-
         //Adiciona paineis ao frame principal
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(panelBotao, BorderLayout.SOUTH);
+
+        //Cria e configura botão de adicionar
+        btnAdicionar.addActionListener(e -> c.cadastrarCategoria(this));
+
+        //Cria e configura botão de editar
+        btnEditar.addActionListener(e -> c.editarCategoria(categorias.getSelectedValue(), this));
+
+        //Cria e configura botão de remover
+        btnRemover.addActionListener(e -> c.excluirCategoria(categorias.getSelectedValue(), this));
 
         //Adiciona o frame principal a tela principal
         add(panel);

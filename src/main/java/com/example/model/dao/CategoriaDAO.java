@@ -10,6 +10,7 @@ public interface CategoriaDAO {
     SessionFactory factory = getFactory();
 
     boolean salvar(Categoria categoria);
-    boolean editar(Categoria categoria);
-    boolean excluir(Categoria categoria);
+    boolean editar(String oldCategoria, String Categoria);
+    boolean excluir(String categoria);
+    Categoria getCategoria(String categoria);
 }

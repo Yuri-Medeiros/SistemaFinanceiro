@@ -1,6 +1,5 @@
 package com.example.view;
 
-import com.example.controller.CategoriaController;
 import com.example.controller.TransacaoController;
 import com.example.model.entity.Categoria;
 import com.example.model.impl.ContaSQLite;
@@ -14,7 +13,6 @@ import java.text.ParseException;
 public class NovaTransacao extends JFrame {
 
     private JFormattedTextField campoData = null;
-    private final CategoriaController g = new CategoriaController();
     private final TransacaoController t = new TransacaoController();
 
     public NovaTransacao() {
@@ -46,7 +44,7 @@ public class NovaTransacao extends JFrame {
 
         //Obtem categorias e insere campo
         ContaSQLite SQLite = new ContaSQLite();
-        List<Categoria> categorias = SQLite.getCategorias(Main.contaAtiva);
+        List<Categoria> categorias = SQLite.getCategorias();
         panel.add(new JLabel("Categoria:"));
         JComboBox<String> campoCategoria = new JComboBox<String>();
         for (Categoria categoria : categorias) {
@@ -54,7 +52,7 @@ public class NovaTransacao extends JFrame {
         }
         panel.add(campoCategoria);
 
-        //Insere campos de data
+        //Insere campo de data
         panel.add(new JLabel("Data:"));
         try {
             MaskFormatter mascaraData = new MaskFormatter("##/##/####");
@@ -84,22 +82,23 @@ public class NovaTransacao extends JFrame {
         JButton btnSalvar = new JButton("Salvar");
         btnSalvar.setBackground(new Color(0, 168, 107));
         btnSalvar.setForeground(Color.white);
-        btnSalvar.addActionListener(e -> {t.adicionarTransacao(
+        btnSalvar.addActionListener(e ->
+
+            //Registra transacao
+            t.adicionarTransacao(
                 campoValor.getText().toLowerCase().trim(),
                 (String) campoCategoria.getSelectedItem(),
                 campoDescricao.getText().toLowerCase().trim(),
                 (String) campoTipo.getSelectedItem(),
                 campoData.getText().toLowerCase().trim(),
-                this);});
+                this)
+        );
 
         //Cria e configura botão de cancelar
         JButton btnCancelar = new JButton("Cancelar");
         btnCancelar.setBackground(new Color(215, 60, 60));
         btnCancelar.setForeground(Color.white);
-        btnCancelar.addActionListener(ev -> {
-
-            dispose();
-        });
+        btnCancelar.addActionListener(e -> dispose());
 
         //Adiciona botões no painel e painel na tela principal
         botoesPanel.add(btnSalvar);

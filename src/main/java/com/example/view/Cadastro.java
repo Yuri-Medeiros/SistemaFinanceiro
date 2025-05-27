@@ -7,41 +7,34 @@ import java.awt.*;
 
 public class Cadastro extends JFrame {
 
-    /*
-    Define o campo para preencher oo usuario,
-    campo para preencher a senha,
-    botão para ação
-    e o controller
-    */
-    private final JTextField login;
-    private final JPasswordField senha;
-    private final JPasswordField confSenha;
-    private final ContaController c = new ContaController();
-
     public Cadastro() {
 
-        //Mesmos elementos abaixo de Login
+        //Configurações basicas da tela principal
         setTitle("Nova conta");
         setSize(300, 200);
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
 
+        //Insere grade para layout
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        //Insere titulo de login
         JLabel userLabel = new JLabel("Login:");
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
         add(userLabel, gbc);
 
-        login = new JTextField(15);
+        //Insere campo de login
+        JTextField login = new JTextField(15);
         gbc.gridx = 1;
         gbc.weightx = 1;
         gbc.gridwidth = 2;
         add(login, gbc);
 
+        //Insere titulo de senha
         JLabel passLabel = new JLabel("Senha:");
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -50,12 +43,14 @@ public class Cadastro extends JFrame {
         gbc.anchor = GridBagConstraints.EAST;
         add(passLabel, gbc);
 
-        senha = new JPasswordField(15);
+        //Insere campo de senha
+        JPasswordField senha = new JPasswordField(15);
         gbc.gridx = 1;
         gbc.gridwidth = 2;
         gbc.weightx = 1;
         add(senha, gbc);
 
+        //Insere titulo de confirmação de senha
         JLabel confPassLabel = new JLabel("Confirmar Senha:");
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -64,12 +59,14 @@ public class Cadastro extends JFrame {
         gbc.anchor = GridBagConstraints.EAST;
         add(confPassLabel, gbc);
 
-        confSenha = new JPasswordField(15);
+        //Insere campo de confirmação de senha
+        JPasswordField confSenha = new JPasswordField(15);
         gbc.gridx = 1;
         gbc.gridwidth = 2;
         gbc.weightx = 1;
         add(confSenha, gbc);
 
+        //Insere botão de cadastrar
         JButton botao = new JButton("Cadastrar");
         botao.setBackground(new Color(0, 120, 215));
         botao.setForeground(Color.WHITE);
@@ -79,7 +76,13 @@ public class Cadastro extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         add(botao, gbc);
 
-        botao.addActionListener(
+        //Inicia controller de conta
+        ContaController c = new ContaController();
+
+        //Define ação do botão de cadastro
+        botao.addActionListener(e ->
+
+                //Realiza o cadastro
                 c.cadastrar(
                         login.getText().toLowerCase().trim(),
                         new String(senha.getPassword()).toLowerCase().trim(),

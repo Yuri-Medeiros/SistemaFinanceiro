@@ -1,23 +1,19 @@
-package com.example.view;
+package com.example;
 
 import com.example.model.entity.Conta;
+import com.example.view.Login;
 
 import javax.swing.SwingUtilities;
-import java.util.ArrayList;
 
 public class Main {
 
-    //Cria os atributos de controle de usuarios
-    public static final ArrayList<Conta> contasCadastradas = new ArrayList<>();
+    //Cria o atributo da conta atual
     public static Conta contaAtiva;
 
     //Ponto de partida de execução
     public static void main(String[] args){
 
-        //Executa a interface gráfica chamando criando a classe Login
+        //Executa a interface gráfica instanciando a classe Login
         SwingUtilities.invokeLater(() -> new Login().setVisible(true));
-
     }
 }
-
-

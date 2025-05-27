@@ -1,6 +1,6 @@
 package com.example.view;
 
-import com.example.controller.TransacaoController;
+import com.example.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,16 +48,24 @@ public class TelaPrincipal extends JFrame {
         panel.add(panelBotao, BorderLayout.SOUTH);
 
         //Configura ação do botão de adicionar transação
-        btnAdicionar.addActionListener(e ->
-                SwingUtilities.invokeLater(() -> new NovaTransacao().setVisible(true)));
+        btnAdicionar.addActionListener(e -> {
+
+            dispose();
+            SwingUtilities.invokeLater(() -> new NovaTransacao().setVisible(true));
+        });
 
         //Configura ação do botão de consultar transações
-        btnConsulta.addActionListener(e ->
-                SwingUtilities.invokeLater(() -> new Consulta().setVisible(true)));
+        btnConsulta.addActionListener(e -> {
+
+            dispose();
+            SwingUtilities.invokeLater(() -> new Consulta().setVisible(true));
+        });
 
         //Configura ação do botão de gerencisr categorias
-        btnCategorias.addActionListener(e ->
-                SwingUtilities.invokeLater(() -> new GerenciaCategorias().setVisible(true)));
+        btnCategorias.addActionListener(e -> {
+
+            SwingUtilities.invokeLater(() -> new GerenciaCategorias().setVisible(true));
+        });
 
         //Configura ação do botão de sair
         btnSair.addActionListener(e -> {
@@ -70,5 +78,4 @@ public class TelaPrincipal extends JFrame {
         //Adiciona frame principal a tela principal
         add(panel);
     }
-
 }

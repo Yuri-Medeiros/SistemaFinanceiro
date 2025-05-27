@@ -4,41 +4,33 @@ import com.example.controller.ContaController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Login extends JFrame {
 
-    /*
-    Define o campo para preencher oo usuario,
-    campo para preencher a senha
-    e botão para ação
-    */
-    private final JTextField login;
-    private final JPasswordField senha;
-    private final ContaController c = new ContaController();
-
     public Login() {
-        setTitle("Login");                                          //Define titulo da pagina
-        setSize(300, 200);                             //Define tamanho da tela
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);            //Define que ao fechar, encerra o programa
-        setLocationRelativeTo(null);                              //Define inicialização no centro do monitor
-        setLayout(new GridBagLayout());                           //Cria uma grade para ajudar na alocação dos elementos, cresce conforme adicionamos
 
-        GridBagConstraints gbc = new GridBagConstraints();         //Cria a classe que organiza os elementos
-        gbc.insets = new Insets(5, 5, 5, 5);    //Define espaçamento de 5px entre elementos
-        gbc.fill = GridBagConstraints.HORIZONTAL;                    //Define orientação horizontal para elementos
+        //Configurações basicas da tela principal
+        setTitle("Login");
+        setSize(300, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new GridBagLayout());
+
+        //Insersão de grade para layout na tela
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         //Insere titulo do campo de usuario
-        JLabel userLabel = new JLabel("Login:");                //Cria classe de descricao
-        gbc.gridx = 0;                                              //Define posição em X do elemento
-        gbc.gridy = 0;                                             //Define posição em Y do elemento
-        gbc.gridwidth = 1;                                        //Define posição fixa do elemento
-        gbc.anchor = GridBagConstraints.EAST;                    //Define a posição absoluta do elemento
-        add(userLabel, gbc);                                    //Insere o elemento, repete o mesmo para os demais
+        JLabel userLabel = new JLabel("Login:");
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        add(userLabel, gbc);
 
         //Insere campo de usuario
-        login = new JTextField(15);
+        JTextField login = new JTextField(15);
         gbc.gridx = 1;
         gbc.weightx = 1;
         gbc.gridwidth = 2;
@@ -54,7 +46,7 @@ public class Login extends JFrame {
         add(passLabel, gbc);
 
         //Insere campo de senha
-        senha = new JPasswordField(15);
+        JPasswordField senha = new JPasswordField(15);
         gbc.gridx = 1;
         gbc.gridwidth = 2;
         gbc.weightx = 1;
@@ -77,21 +69,23 @@ public class Login extends JFrame {
         gbc.gridy = 3;
         add(botaoCadastro, gbc);
 
-        //Define ação para acionamento do botão
-        botaoLogin.addActionListener(c.logar(
-                login.getText().toLowerCase().trim(),
-                new String(senha.getPassword()).toLowerCase().trim(),
-                this
-        ));
+        //Inicia controller de conta
+        ContaController c = new ContaController();
 
-        //Ação para botão de cadastro
-        botaoCadastro.addActionListener(new ActionListener() {
+        //Define ação para botão de login
+        botaoLogin.addActionListener(e ->
+
+                //Efetiva o login
+                c.logar(login.getText().toLowerCase().trim(),
+                        new String(senha.getPassword()).toLowerCase().trim(),
+                        this)
+        );
+
+        //Define ação para botão de cadastro
+        botaoCadastro.addActionListener(e -> {
 
             //Inicia tela de Cadastro
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(() -> new Cadastro().setVisible(true));
-            }
+            SwingUtilities.invokeLater(() -> new Cadastro().setVisible(true));
         });
     }
 }

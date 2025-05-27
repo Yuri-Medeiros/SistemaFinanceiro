@@ -4,7 +4,7 @@ import com.example.model.dao.ContaDAO;
 import com.example.model.entity.Categoria;
 import com.example.model.entity.Conta;
 import com.example.model.entity.Transacao;
-import com.example.view.Main;
+import com.example.Main;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -16,8 +16,6 @@ public class ContaSQLite implements ContaDAO {
 
     @Override
     public void logar(String login, String senha){
-
-        Transaction tx = null;
 
         try (Session session = factory.openSession()) {
 
@@ -31,7 +29,7 @@ public class ContaSQLite implements ContaDAO {
                 throw new  IllegalArgumentException("Login ou senha incorretos");
             }
 
-            Main.contaAtiva = contas.getFirst();
+            Main.contaAtiva = contas.get(0);
         }
     }
 
@@ -57,35 +55,25 @@ public class ContaSQLite implements ContaDAO {
     }
 
     @Override
-    public List<Categoria> getCategorias(Conta conta) {
-
-        Transaction tx = null;
+    public List<Categoria> getCategorias() {
 
         try (Session session = factory.openSession()) {
 
-            List<Categoria> categorias = session.createQuery(
+            return session.createQuery(
                             "from Categoria where conta = :conta", Categoria.class)
-                    .setParameter("conta", conta)
+                    .setParameter("conta", Main.contaAtiva)
                     .list();
-
-            if (categorias.isEmpty()) {
-                throw new  IllegalArgumentException("Não possui categorias");
-            }
-
-            return categorias;
         }
     }
 
     @Override
-    public List<Transacao> getTransacoes(Conta conta) {
-
-        Transaction tx = null;
+    public List<Transacao> getTransacoes() {
 
         try (Session session = factory.openSession()) {
 
             List<Transacao> transacaos = session.createQuery(
                             "from Transacao where conta = :conta", Transacao.class)
-                    .setParameter("conta", conta)
+                    .setParameter("conta", Main.contaAtiva)
                     .list();
 
             if (transacaos.isEmpty()) {
