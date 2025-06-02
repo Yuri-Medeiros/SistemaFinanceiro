@@ -58,6 +58,21 @@ public class ContaSQLite implements ContaDAO {
     }
 
     @Override
+    public float getSaldo(){
+
+        try (Session session = factory.openSession()) {
+
+            return session.get(Conta.class, Main.contaAtiva).getSaldo();
+        }
+    }
+
+    @Override
+    public void setSaldo(float valor, String tipo){
+
+        System.out.println("adicionar funcao de setar saldo");
+    }
+
+    @Override
     public List<Categoria> getCategorias() {
 
         try (Session session = factory.openSession()) {

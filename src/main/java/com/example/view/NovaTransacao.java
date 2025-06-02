@@ -98,18 +98,17 @@ public class NovaTransacao extends JFrame {
         JButton btnCancelar = new JButton("Cancelar");
         btnCancelar.setBackground(new Color(215, 60, 60));
         btnCancelar.setForeground(Color.white);
-        btnCancelar.addActionListener(e -> dispose());
+        btnCancelar.addActionListener(e -> {
+
+            dispose();
+            SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
+
+        });
 
         //Adiciona botões no painel e painel na tela principal
         botoesPanel.add(btnSalvar);
         botoesPanel.add(btnCancelar);
         add(botoesPanel, BorderLayout.SOUTH);
 
-        //Verifica se não há categorias cadastrada e abre gerenciamento de categorias
-        if(categorias.isEmpty()) {
-
-            JOptionPane.showMessageDialog(null, "Não há categorias cadastrada. Adicionar uma categoria!");
-            SwingUtilities.invokeLater(() -> new GerenciaCategorias().setVisible(true));
-        }
     }
 }

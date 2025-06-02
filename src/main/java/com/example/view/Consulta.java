@@ -89,7 +89,10 @@ public class Consulta extends JFrame {
         cancelButton.setFont(new Font("Arial", Font.BOLD, 14));
 
         //Configura ação de botão de cancelamento
-        cancelButton.addActionListener(e -> dispose());
+        cancelButton.addActionListener(e -> {
+            dispose();
+            SwingUtilities.invokeLater(() -> new TelaPrincipal().setVisible(true));
+        });
 
         //Adiciona botões no frame
         JPanel panelBotao = new JPanel();

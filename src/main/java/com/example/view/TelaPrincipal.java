@@ -1,6 +1,8 @@
 package com.example.view;
 
 import com.example.Main;
+import com.example.model.dao.ContaDAO;
+import com.example.model.impl.ContaSQLite;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,6 +51,16 @@ public class TelaPrincipal extends JFrame {
 
         //Configura ação do botão de adicionar transação
         btnAdicionar.addActionListener(e -> {
+
+            ContaDAO SQLite = new ContaSQLite();
+
+            //Verifica se não há categorias cadastrada e abre gerenciamento de categorias
+            if(SQLite.getCategorias().isEmpty()) {
+
+                JOptionPane.showMessageDialog(null, "Não há categorias cadastrada. Adicionar uma categoria!");
+                SwingUtilities.invokeLater(() -> new GerenciaCategorias().setVisible(true));
+                return;
+            }
 
             dispose();
             SwingUtilities.invokeLater(() -> new NovaTransacao().setVisible(true));

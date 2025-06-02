@@ -18,5 +18,7 @@ public interface ContaDAO {
     List<Categoria> getCategorias();
     List<Transacao> getTransacoes();
     boolean loginExiste(String login);
+    float getSaldo();
+    void setSaldo(float saldo, String tipo);
 
 }

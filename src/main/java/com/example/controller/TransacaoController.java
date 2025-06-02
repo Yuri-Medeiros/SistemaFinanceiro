@@ -1,6 +1,9 @@
 package com.example.controller;
 
+import com.example.model.dao.ContaDAO;
+import com.example.model.dao.TransacaoDAO;
 import com.example.model.entity.Transacao;
+import com.example.model.impl.ContaSQLite;
 import com.example.model.impl.TransacaoSQLite;
 import com.example.Main;
 import com.example.view.NovaTransacao;
@@ -13,7 +16,8 @@ import java.time.format.DateTimeParseException;
 
 public class TransacaoController {
 
-    private final TransacaoSQLite SQLite = new TransacaoSQLite();
+    private final TransacaoDAO transacaoSQLite = new TransacaoSQLite();
+    private final ContaDAO contaSQLite = new ContaSQLite();
 
     //Valida os dados e registra uma transação
     public void adicionarTransacao(String valor,
@@ -59,18 +63,14 @@ public class TransacaoController {
                     tipo);
 
             //Tenta registrar a transação
-            if (!SQLite.salvar(transacao)) {
+            if (!transacaoSQLite.salvar(transacao)) {
 
                 JOptionPane.showMessageDialog(null, "Não foi possivel salvar sa transação. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             //Altera o saldo da conta
-            if(tipo.equals("Receita")){
-                Main.contaAtiva.depositar(valorFormatted);
-            } else {
-                Main.contaAtiva.sacar(valorFormatted);
-            }
+            contaSQLite.setSaldo(valorFormatted, tipo);
 
             //Confirma transação para usuario
             JOptionPane.showMessageDialog(null,

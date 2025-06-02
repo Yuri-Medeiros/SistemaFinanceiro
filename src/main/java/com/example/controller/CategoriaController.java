@@ -71,11 +71,11 @@ public class CategoriaController extends JFrame {
         String novaCategoria;
         do {
             //Obtem a nova descrição da categoria
-            novaCategoria = JOptionPane.showInputDialog(this, "Editar categoria:", categoria);
+            novaCategoria = JOptionPane.showInputDialog(this, "Atenção! Se houverem transações nesta categoria, todas serão atualizadas.\n\nEditar categoria:", categoria);
             novaCategoria = novaCategoria.trim();
 
             //Looping para garantir valores validos
-        } while (novaCategoria.isEmpty() || !novaCategoria.equals(categoria));
+        } while (novaCategoria.isEmpty() || novaCategoria.equals(categoria));
 
         try {
 

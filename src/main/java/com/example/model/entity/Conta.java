@@ -30,15 +30,6 @@ public class Conta {
         this.saldo = 0;
     }
 
-    public float getSaldo() {
-        return saldo;
-    }
+    public float getSaldo() {return saldo;}
 
-    public void depositar(float valor) {
-        this.saldo += valor;
-    }
-
-    public void sacar(float valor) {
-        this.saldo -= valor;
-    }
 }
