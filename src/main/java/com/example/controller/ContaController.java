@@ -22,35 +22,39 @@ public class ContaController extends JFrame {
     //Verifica informações de cadastro e tenta salvar no banco de dados
     public void cadastrar(String login, String senha, String confSenha, Cadastro view) {
 
-        //Exibe mensagens de erros
         if (login.isEmpty() || senha.isEmpty() || confSenha.isEmpty()) {
             JOptionPane.showMessageDialog(ContaController.this, "Preencha todos os campos", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
+        }
 
-        } else if (!senha.equals(confSenha)) {
+        if (!senha.equals(confSenha)) {
             JOptionPane.showMessageDialog(ContaController.this, "Senhas não conferem", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        try {
+        // ✅ Verifica se o login já existe antes de tentar salvar
+        if (contaSQLite.loginExiste(login)) {
+            JOptionPane.showMessageDialog(ContaController.this, "Usuário já existe! Escolha outro", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-            //Instancia uma entidade conta
+        try {
             Conta conta = new Conta(login, senha);
 
-            //Tenta salvar no banco de dados
             if (!contaSQLite.salvar(conta)) {
-                JOptionPane.showMessageDialog(ContaController.this, "Não foi possivel cadastrar a conta. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(ContaController.this, "Não foi possível cadastrar a conta. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            //Se concluido, fecha a tela de cadastro
-            view.dispose();
+            JOptionPane.showMessageDialog(ContaController.this, "Conta cadastrada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            view.dispose(); // fecha tela de cadastro
 
-        //Exibe erro caso Login ja exista
-        } catch (ConstraintViolationException ex){
-            JOptionPane.showMessageDialog(ContaController.this, "Usuário ja existe! Escolha outro", "Erro", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(ContaController.this, "Erro inesperado: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     //Verifica informações de login com consulta em banco de dados
     public void logar(String login, String senha, Login view) {

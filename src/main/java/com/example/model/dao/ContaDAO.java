@@ -17,4 +17,6 @@ public interface ContaDAO {
     boolean salvar(Conta conta);
     List<Categoria> getCategorias();
     List<Transacao> getTransacoes();
+    boolean loginExiste(String login);
+
 }

@@ -7,6 +7,9 @@ import com.example.model.entity.Transacao;
 import com.example.Main;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import com.example.util.HibernateUtil;
+
+
 
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -82,5 +85,21 @@ public class ContaSQLite implements ContaDAO {
 
             return transacaos;
         }
+
     }
+    @Override
+    public boolean loginExiste(String login) {
+        try (org.hibernate.Session session = HibernateUtil.getFactory().openSession()) {
+            String hql = "SELECT COUNT(*) FROM Conta WHERE login = :login";
+            Long count = (Long) session.createQuery(hql)
+                    .setParameter("login", login)
+                    .uniqueResult();
+            return count != null && count > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }
