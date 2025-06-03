@@ -22,17 +22,17 @@ public class ContaSQLite implements ContaDAO {
 
         try (Session session = factory.openSession()) {
 
-            List<Conta> contas = session.createQuery(
+            Conta conta = session.createQuery(
                     "from Conta where login = :login and senha = :senha", Conta.class)
                     .setParameter("login", login)
                     .setParameter("senha", senha)
-                    .list();
+                    .uniqueResult();
 
-            if (contas.isEmpty()) {
+            if (conta == null) {
                 throw new  IllegalArgumentException("Login ou senha incorretos");
             }
 
-            Main.contaAtiva = contas.get(0);
+            Main.contaAtiva = conta;
         }
     }
 
@@ -57,19 +57,32 @@ public class ContaSQLite implements ContaDAO {
         return true;
     }
 
-    @Override
-    public float getSaldo(){
-
-        try (Session session = factory.openSession()) {
-
-            return session.get(Conta.class, Main.contaAtiva).getSaldo();
-        }
-    }
 
     @Override
     public void setSaldo(float valor, String tipo){
 
-        System.out.println("adicionar funcao de setar saldo");
+        Transaction tx = null;
+
+        try (Session session = factory.openSession()) {
+
+            tx = session.beginTransaction();
+
+            if (tipo.equals("Receita")) {
+
+                Main.contaAtiva.setSaldo(valor);
+            } else {
+
+                Main.contaAtiva.setSaldo((valor * -1));
+            }
+
+            session.merge(Main.contaAtiva);
+            tx.commit();
+
+        }  catch (Exception e) {
+            if (tx != null) tx.rollback();
+
+            throw e;
+        }
     }
 
     @Override
@@ -102,6 +115,7 @@ public class ContaSQLite implements ContaDAO {
         }
 
     }
+
     @Override
     public boolean loginExiste(String login) {
         try (org.hibernate.Session session = HibernateUtil.getFactory().openSession()) {
@@ -115,6 +129,5 @@ public class ContaSQLite implements ContaDAO {
             return false;
         }
     }
-
 
 }

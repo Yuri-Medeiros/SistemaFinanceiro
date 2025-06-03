@@ -63,14 +63,10 @@ public class TransacaoController {
                     tipo);
 
             //Tenta registrar a transação
-            if (!transacaoSQLite.salvar(transacao)) {
-
-                JOptionPane.showMessageDialog(null, "Não foi possivel salvar sa transação. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            //Altera o saldo da conta
+            transacaoSQLite.salvar(transacao);
             contaSQLite.setSaldo(valorFormatted, tipo);
+
+            //JOptionPane.showMessageDialog(null, "Não foi possivel salvar sa transação. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
 
             //Confirma transação para usuario
             JOptionPane.showMessageDialog(null,
@@ -84,6 +80,9 @@ public class TransacaoController {
 
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(null, "Data inválida!", "Erro", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+
         }
     }
 }

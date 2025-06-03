@@ -60,4 +60,6 @@ public class Transacao {
     public LocalDate getData() {
         return data;
     }
+
+    public void setCategoria(String categoria) {}
 }

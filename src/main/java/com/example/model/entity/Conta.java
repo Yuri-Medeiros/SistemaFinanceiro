@@ -32,4 +32,8 @@ public class Conta {
 
     public float getSaldo() {return saldo;}
 
+    public void setSaldo(float saldo) {this.saldo += saldo;}
+
+    public int getId_conta() {return id_conta;}
+
 }

@@ -3,9 +3,12 @@ package com.example.model.impl;
 import com.example.model.dao.CategoriaDAO;
 import com.example.model.entity.Categoria;
 import com.example.Main;
+import com.example.model.entity.Transacao;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+
+import java.util.List;
 
 
 public class CategoriaSQLite implements CategoriaDAO {
@@ -49,6 +52,16 @@ public class CategoriaSQLite implements CategoriaDAO {
             }
 
             session.merge(categoria);
+
+            List<Transacao> transacoes = session.createQuery("from Transacao where categoria = :categoria", Transacao.class).setParameter("categoria", categoria)
+                    .getResultList();
+
+            for (Transacao transacao : transacoes) {
+
+                transacao.setCategoria(newCategoria);
+                session.merge(transacao);
+            }
+
             tx.commit();
 
         } catch (ConstraintViolationException e) {

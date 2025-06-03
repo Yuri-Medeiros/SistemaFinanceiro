@@ -1,10 +1,12 @@
 package com.example.controller;
 
 import com.example.model.dao.CategoriaDAO;
+import com.example.model.dao.ContaDAO;
 import com.example.model.dao.TransacaoDAO;
 import com.example.model.entity.Categoria;
 import com.example.model.entity.Transacao;
 import com.example.model.impl.CategoriaSQLite;
+import com.example.model.impl.ContaSQLite;
 import com.example.model.impl.TransacaoSQLite;
 import com.example.view.Consulta;
 import com.example.view.GerenciaCategorias;
