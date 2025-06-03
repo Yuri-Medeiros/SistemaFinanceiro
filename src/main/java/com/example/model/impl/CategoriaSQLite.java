@@ -73,9 +73,10 @@ public class CategoriaSQLite implements CategoriaDAO {
             tx.commit();
 
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            //if (tx != null) tx.rollback();
+            //throw e;
+            System.out.println(e.getMessage());
 
-            throw e;
         }
     }
 

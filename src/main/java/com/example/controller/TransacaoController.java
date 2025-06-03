@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TransacaoController {
 
@@ -87,5 +89,32 @@ public class TransacaoController {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
 
         }
+    }
+
+    public void exibirExtrato(
+            String dataInicio,
+            String dataFinal,
+            String tipo,
+            JTextArea resultadoArea) {
+
+        try {
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate inicio = dataInicio.isEmpty() ? LocalDate.MIN : LocalDate.parse(dataInicio, formatter);
+            LocalDate fim = dataFinal.isEmpty() ? LocalDate.MAX : LocalDate.parse(dataFinal, formatter);
+
+            resultadoArea.setText("Data | Categoria | Descrição | Valor\n");
+            for (Transacao transacao : transacaoSQLite.getTransacoesConsulta(inicio, fim, tipo)) {
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                String dataFormatada = dtf.format(transacao.getData());
+
+                String transacaoString = dataFormatada + " - " + transacao.getCategoria() + " - " + transacao.getDescricao() + " - R$" + transacao.getValor();
+                resultadoArea.append(transacaoString + "\n");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 }

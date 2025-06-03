@@ -1,6 +1,7 @@
 package com.example.view;
 
 import com.example.controller.ContaController;
+import com.example.controller.TransacaoController;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
@@ -11,7 +12,7 @@ public class Consulta extends JFrame {
 
     private JFormattedTextField campoDataFiltroInicial = null;
     private JFormattedTextField campoDataFiltroFinal = null;
-    private final ContaController c = new ContaController();
+    private final TransacaoController t = new TransacaoController();
 
     public Consulta() {
 
@@ -74,7 +75,7 @@ public class Consulta extends JFrame {
 
         //Configura ação de botão de consulta
         consultarButton.addActionListener(e ->
-                c.exibirExtrato(
+                t.exibirExtrato(
                         campoDataFiltroInicial.getText(),
                         campoDataFiltroFinal.getText(),
                         (String) tipoCombo.getSelectedItem(),

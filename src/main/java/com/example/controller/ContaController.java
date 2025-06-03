@@ -84,44 +84,4 @@ public class ContaController extends JFrame {
         }
     }
 
-    public void exibirExtrato(
-            String dataInicio,
-            String dataFinal,
-            String tipo,
-            JTextArea resultadoArea) {
-
-        try {
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate inicio = dataInicio.isEmpty() ? LocalDate.MIN : LocalDate.parse(dataInicio, formatter);
-            LocalDate fim = dataFinal.isEmpty() ? LocalDate.MAX : LocalDate.parse(dataFinal, formatter);
-
-            List<String> tipos = new ArrayList<>();
-            if (tipo.equals("Todos") || tipo.equals("Receita")) {
-                tipos.add("Entrada");
-            }
-            if (tipo.equals("Todos") || tipo.equals("Despesa")) {
-                tipos.add("Saida");
-            }
-
-            resultadoArea.setText("Data | Categoria | Descrição | Valor\n");
-            for (Transacao transacao : transacaoSQLite.getTransacoes()) {
-                boolean validaData = (transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim))
-                        || transacao.getData().equals(inicio)
-                        || transacao.getData().equals(fim);
-                boolean validaTipo = tipos.contains(transacao.getTipo());
-
-                if (validaData && validaTipo) {
-
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    String dataFormatada = dtf.format(transacao.getData());
-
-                    String transacaoString = dataFormatada + " - " + transacao.getCategoria() + " - " + transacao.getDescricao() + " - R$" + transacao.getValor();
-                    resultadoArea.append(transacaoString + "\n");
-                }
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro na consulta: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 }

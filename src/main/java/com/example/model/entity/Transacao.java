@@ -19,7 +19,7 @@ public class Transacao {
     @Column(nullable = false)
     private float valor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_categoria", nullable = false)
     private Categoria categoria;
 

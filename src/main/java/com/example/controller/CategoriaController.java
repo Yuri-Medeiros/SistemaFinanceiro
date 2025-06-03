@@ -94,10 +94,10 @@ public class CategoriaController extends JFrame {
 
         try {
 
-            List<Transacao> transacaos = transacaoSQLite.getTransacaoByCategoria(categoria);
+            List<Transacao> transacoes = transacaoSQLite.getTransacaoByCategoria(categoria);
 
-            if (!transacaos.isEmpty()) {
-                JOptionPane.showConfirmDialog(this, "Há transações nesta categoria, primeiro edite ou exclua essas", "Aviso", JOptionPane.WARNING_MESSAGE);
+            if (transacoes != null) {
+                JOptionPane.showMessageDialog(this, "Há transações nesta categoria.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
@@ -109,7 +109,8 @@ public class CategoriaController extends JFrame {
             SwingUtilities.invokeLater(() -> new GerenciaCategorias().setVisible(true));
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Não foi possivel excluir esta categoria. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
+            //JOptionPane.showMessageDialog(this, "Não foi possivel excluir esta categoria. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
+            System.out.println(ex.getMessage());
         }
     }
 
