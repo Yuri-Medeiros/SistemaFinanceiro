@@ -1,11 +1,12 @@
 package com.example.model.impl;
 
 import com.example.model.dao.CategoriaDAO;
+import com.example.model.dao.TransacaoDAO;
 import com.example.model.entity.Categoria;
 import com.example.Main;
+import com.example.model.entity.Transacao;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class CategoriaSQLite implements CategoriaDAO {
             session.persist(categoria);
             tx.commit();
 
-        } catch (ConstraintViolationException e) {
+        } catch (Exception e) {
             if (tx != null) tx.rollback();
 
             throw e;
@@ -30,7 +31,7 @@ public class CategoriaSQLite implements CategoriaDAO {
     }
 
     @Override
-    public boolean editar(String oldCategoria, String newCategoria) {
+    public void editar(String oldCategoria, String newCategoria) {
 
         Transaction tx = null;
 
@@ -38,7 +39,7 @@ public class CategoriaSQLite implements CategoriaDAO {
 
             tx = session.beginTransaction();
 
-            Categoria categoria = session.get(Categoria.class, oldCategoria);
+            Categoria categoria = getCategoria(oldCategoria);
 
             if (categoria != null) {
                 categoria.setCategoria(newCategoria);
@@ -47,47 +48,38 @@ public class CategoriaSQLite implements CategoriaDAO {
 
             tx.commit();
 
-        } catch (ConstraintViolationException e) {
-            if (tx != null) tx.rollback();
-
-            throw e;
         } catch (Exception e) {
             if (tx != null) tx.rollback();
 
-            return false;
+            throw e;
         }
-
-        return true;
     }
 
     @Override
-    public boolean excluir(String categoria) {
+    public void excluir(String categoria) {
 
         Transaction tx = null;
 
         try (Session session = factory.openSession()) {
             tx = session.beginTransaction();
 
-            Categoria xCategoria = getCategoria(categoria);
-
-            xCategoria = session.merge(xCategoria);
+            Categoria xCategoria = session.createQuery(
+                            "from Categoria where conta = :conta and categoria = :categoria", Categoria.class)
+                    .setParameter("conta", Main.contaAtiva)
+                    .setParameter("categoria", categoria)
+                    .uniqueResult();
 
             session.remove(xCategoria);
             tx.commit();
 
-        } catch (ConstraintViolationException e) {
-            if (tx != null) tx.rollback();
-
-            throw e;
         } catch (Exception e) {
             if (tx != null) tx.rollback();
 
-            return false;
+            throw e;
         }
-
-        return true;
     }
 
+    @Override
     public Categoria getCategoria(String categoria) {
 
         try (Session session = factory.openSession()) {

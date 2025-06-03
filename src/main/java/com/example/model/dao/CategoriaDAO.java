@@ -12,8 +12,8 @@ public interface CategoriaDAO {
     SessionFactory factory = getFactory();
 
     void salvar(Categoria categoria);
-    boolean editar(String oldCategoria, String Categoria);
-    boolean excluir(String categoria);
+    void editar(String oldCategoria, String Categoria);
+    void excluir(String categoria);
     Categoria getCategoria(String categoria);
     List<Categoria> getCategorias();
 

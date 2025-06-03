@@ -88,33 +88,28 @@ public class CategoriaController extends JFrame {
 
         //Verifica se foi selecionado alguma categoria
         if (categoria == null) {
-            JOptionPane.showMessageDialog(this, "Selecione uma categoria para editar", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Selecione uma categoria para excluir", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            //Busca transacoes com esta categoria
-            List<Transacao> transacoes = transacaoSQLite.getTransacaoByCategoria(categoria);
 
-            //Verifica se há transacoes nesta categoria
-            if (!transacoes.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Há transações nesta categoria. Por favor, altere!", "Erro", JOptionPane.ERROR_MESSAGE);
-                view.dispose();
-                SwingUtilities.invokeLater(() -> new Consulta().setVisible(true));
+            List<Transacao> transacaos = transacaoSQLite.getTransacaoByCategoria(categoria);
+
+            if (!transacaos.isEmpty()) {
+                JOptionPane.showConfirmDialog(this, "Há transações nesta categoria, primeiro edite ou exclua essas", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
             }
 
             //Exclui a categoria
-            if (!categoriaSQLite.excluir(categoria)) {
-                JOptionPane.showMessageDialog(this, "Não foi possivel excluir a categoria. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            categoriaSQLite.excluir(categoria);
 
             //Atualiza a pagina de gerenciamento de categorias
             view.dispose();
             SwingUtilities.invokeLater(() -> new GerenciaCategorias().setVisible(true));
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Não foi possivel editar esta categoria. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Não foi possivel excluir esta categoria. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
