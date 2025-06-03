@@ -59,32 +59,20 @@ public class TransacaoSQLite implements TransacaoDAO {
     }
 
     @Override
-    public void atualizarCategoria(String newCategoria, String oldCategoria) {
+    public List<Transacao> getTransacoes() {
 
-        Transaction tx = null;
-        Session session = null;
+        try (Session session = factory.openSession()) {
 
-        try {
-            session = factory.openSession();
-            tx = session.beginTransaction();
+            List<Transacao> transacaos = session.createQuery(
+                            "from Transacao where conta = :conta", Transacao.class)
+                    .setParameter("conta", Main.contaAtiva)
+                    .list();
 
-            session.createQuery("update Transacao set categoria = :newcategoria where conta = :conta and categoria = :oldcategoria")
-                    .setParameter("conta", Main.contaAtiva.getId_conta())
-                    .setParameter("newcategoria", newCategoria)
-                    .setParameter("oldcategoria", oldCategoria)
-                    .executeUpdate();
-
-            tx.commit();
-        } catch (Exception e) {
-            if (tx != null && tx.isActive()) {
-                tx.rollback();
+            if (transacaos.isEmpty()) {
+                throw new  IllegalArgumentException("Não possui transacoes");
             }
-            e.printStackTrace();
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
+
+            return transacaos;
         }
-
     }
 }

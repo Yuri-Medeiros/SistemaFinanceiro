@@ -11,12 +11,14 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_categoria;
 
+    @Column(nullable = false)
+    private String categoria;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_conta", nullable = false)
     private Conta conta;
 
-    @Column(nullable = false)
-    private String categoria;
+
 
     public Categoria() {}
 

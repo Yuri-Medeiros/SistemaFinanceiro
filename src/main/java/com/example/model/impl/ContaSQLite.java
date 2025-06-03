@@ -57,7 +57,6 @@ public class ContaSQLite implements ContaDAO {
         return true;
     }
 
-
     @Override
     public void setSaldo(float valor, String tipo){
 
@@ -83,37 +82,6 @@ public class ContaSQLite implements ContaDAO {
 
             throw e;
         }
-    }
-
-    @Override
-    public List<Categoria> getCategorias() {
-
-        try (Session session = factory.openSession()) {
-
-            return session.createQuery(
-                            "from Categoria where conta = :conta", Categoria.class)
-                    .setParameter("conta", Main.contaAtiva)
-                    .list();
-        }
-    }
-
-    @Override
-    public List<Transacao> getTransacoes() {
-
-        try (Session session = factory.openSession()) {
-
-            List<Transacao> transacaos = session.createQuery(
-                            "from Transacao where conta = :conta", Transacao.class)
-                    .setParameter("conta", Main.contaAtiva)
-                    .list();
-
-            if (transacaos.isEmpty()) {
-                throw new  IllegalArgumentException("Não possui transacoes");
-            }
-
-            return transacaos;
-        }
-
     }
 
     @Override

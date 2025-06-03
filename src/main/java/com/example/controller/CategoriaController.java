@@ -1,12 +1,10 @@
 package com.example.controller;
 
 import com.example.model.dao.CategoriaDAO;
-import com.example.model.dao.ContaDAO;
 import com.example.model.dao.TransacaoDAO;
 import com.example.model.entity.Categoria;
 import com.example.model.entity.Transacao;
 import com.example.model.impl.CategoriaSQLite;
-import com.example.model.impl.ContaSQLite;
 import com.example.model.impl.TransacaoSQLite;
 import com.example.view.Consulta;
 import com.example.view.GerenciaCategorias;
@@ -45,11 +43,7 @@ public class CategoriaController extends JFrame {
             //Instancia entidade de categoria
             Categoria categoria = new Categoria(Main.contaAtiva, novaCategoria);
 
-            //Exibe erro para excessões genericas
-            if (!categoriaSQLite.salvar(categoria)) {
-                JOptionPane.showMessageDialog(CategoriaController.this, "Não foi possivel salvar a categoria. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            categoriaSQLite.salvar(categoria);
 
             //Atualiza a pagina com a lista nova
             view.dispose();
@@ -122,5 +116,15 @@ public class CategoriaController extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Não foi possivel editar esta categoria. Tente novamente!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    public List<Categoria> getCategorias() {
+
+        return categoriaSQLite.getCategorias();
+    }
+
+    public Categoria getCategoria(String categoria) {
+
+        return categoriaSQLite.getCategoria(categoria);
     }
 }

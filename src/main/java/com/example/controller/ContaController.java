@@ -1,13 +1,14 @@
 package com.example.controller;
 
 import com.example.model.dao.ContaDAO;
+import com.example.model.dao.TransacaoDAO;
 import com.example.model.entity.Conta;
 import com.example.model.entity.Transacao;
 import com.example.model.impl.ContaSQLite;
+import com.example.model.impl.TransacaoSQLite;
 import com.example.view.Cadastro;
 import com.example.view.Login;
 import com.example.view.TelaPrincipal;
-import org.hibernate.exception.ConstraintViolationException;
 
 import javax.swing.*;
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import java.util.List;
 public class ContaController extends JFrame {
 
     final ContaDAO contaSQLite = new ContaSQLite();
+    final TransacaoDAO transacaoSQLite = new TransacaoSQLite();
 
     //Verifica informações de cadastro e tenta salvar no banco de dados
     public void cadastrar(String login, String senha, String confSenha, Cadastro view) {
@@ -54,7 +56,6 @@ public class ContaController extends JFrame {
             JOptionPane.showMessageDialog(ContaController.this, "Erro inesperado: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
-
 
     //Verifica informações de login com consulta em banco de dados
     public void logar(String login, String senha, Login view) {
@@ -104,7 +105,7 @@ public class ContaController extends JFrame {
             }
 
             resultadoArea.setText("Data | Categoria | Descrição | Valor\n");
-            for (Transacao transacao : contaSQLite.getTransacoes()) {
+            for (Transacao transacao : transacaoSQLite.getTransacoes()) {
                 boolean validaData = (transacao.getData().isAfter(inicio) && transacao.getData().isBefore(fim))
                         || transacao.getData().equals(inicio)
                         || transacao.getData().equals(fim);

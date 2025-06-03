@@ -1,8 +1,10 @@
 package com.example.controller;
 
+import com.example.model.dao.CategoriaDAO;
 import com.example.model.dao.ContaDAO;
 import com.example.model.dao.TransacaoDAO;
 import com.example.model.entity.Transacao;
+import com.example.model.impl.CategoriaSQLite;
 import com.example.model.impl.ContaSQLite;
 import com.example.model.impl.TransacaoSQLite;
 import com.example.Main;
@@ -18,6 +20,7 @@ public class TransacaoController {
 
     private final TransacaoDAO transacaoSQLite = new TransacaoSQLite();
     private final ContaDAO contaSQLite = new ContaSQLite();
+    private final CategoriaDAO categoriaSQLite = new CategoriaSQLite();
 
     //Valida os dados e registra uma transação
     public void adicionarTransacao(String valor,
@@ -57,7 +60,7 @@ public class TransacaoController {
 
             //Instancia uma entidade transação
             Transacao transacao = new Transacao(valorFormatted,
-                    categoria,
+                    categoriaSQLite.getCategoria(categoria),
                     descricao,
                     dataConvertida,
                     tipo);

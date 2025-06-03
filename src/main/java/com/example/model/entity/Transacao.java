@@ -19,8 +19,9 @@ public class Transacao {
     @Column(nullable = false)
     private float valor;
 
-    @Column(nullable = false)
-    private String categoria;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private Categoria categoria;
 
     @Column(nullable = false)
     private String descricao;
@@ -32,9 +33,11 @@ public class Transacao {
     @JoinColumn(name = "id_conta", nullable = false)
     private Conta conta;
 
+
+
     public Transacao() {}
 
-    public Transacao(float valor, String categoria, String descricao, LocalDate data, String tipo) {
+    public Transacao(float valor, Categoria categoria, String descricao, LocalDate data, String tipo) {
         this.tipo = tipo;
         this.valor = valor;
         this.categoria = categoria;
@@ -52,7 +55,7 @@ public class Transacao {
     }
 
     public String getCategoria() {
-        return categoria;
+        return categoria.getCategoria();
     }
 
     public String getDescricao() {return descricao;}
@@ -61,5 +64,4 @@ public class Transacao {
         return data;
     }
 
-    public void setCategoria(String categoria) {}
 }

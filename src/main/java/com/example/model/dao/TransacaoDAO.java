@@ -13,6 +13,6 @@ public interface TransacaoDAO {
 
     boolean salvar(Transacao transacao);
     List<Transacao> getTransacaoByCategoria(String categoria);
-    void atualizarCategoria(String newCategoria, String oldCategoria);
+    List<Transacao> getTransacoes();
 
 }

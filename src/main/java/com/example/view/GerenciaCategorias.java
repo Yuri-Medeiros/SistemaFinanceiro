@@ -29,8 +29,7 @@ public class GerenciaCategorias extends JFrame {
         JPanel panelBotao = new JPanel();
 
         //Cria lista de categorias para exibição
-        ContaSQLite SQLite = new ContaSQLite();
-        List<Categoria> dbCategorias = SQLite.getCategorias();
+        List<Categoria> dbCategorias = c.getCategorias();
 
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (Categoria categoria : dbCategorias) {

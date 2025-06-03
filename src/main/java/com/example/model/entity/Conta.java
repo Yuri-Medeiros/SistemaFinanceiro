@@ -22,6 +22,8 @@ public class Conta {
     @Column(nullable = false)
     private float saldo;
 
+
+
     public Conta() {}
 
     public Conta(String login, String senha) {

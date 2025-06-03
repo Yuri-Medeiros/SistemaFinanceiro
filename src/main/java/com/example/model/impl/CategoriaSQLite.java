@@ -3,7 +3,6 @@ package com.example.model.impl;
 import com.example.model.dao.CategoriaDAO;
 import com.example.model.entity.Categoria;
 import com.example.Main;
-import com.example.model.entity.Transacao;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -14,7 +13,7 @@ import java.util.List;
 public class CategoriaSQLite implements CategoriaDAO {
 
     @Override
-    public boolean salvar(Categoria categoria) {
+    public void salvar(Categoria categoria) {
 
         Transaction tx = null;
 
@@ -27,13 +26,7 @@ public class CategoriaSQLite implements CategoriaDAO {
             if (tx != null) tx.rollback();
 
             throw e;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-
-            return false;
         }
-
-        return true;
     }
 
     @Override
@@ -45,21 +38,11 @@ public class CategoriaSQLite implements CategoriaDAO {
 
             tx = session.beginTransaction();
 
-            Categoria categoria = getCategoria(oldCategoria);
+            Categoria categoria = session.get(Categoria.class, oldCategoria);
 
             if (categoria != null) {
                 categoria.setCategoria(newCategoria);
-            }
-
-            session.merge(categoria);
-
-            List<Transacao> transacoes = session.createQuery("from Transacao where categoria = :categoria", Transacao.class).setParameter("categoria", categoria)
-                    .getResultList();
-
-            for (Transacao transacao : transacoes) {
-
-                transacao.setCategoria(newCategoria);
-                session.merge(transacao);
+                session.merge(categoria);
             }
 
             tx.commit();
@@ -116,4 +99,17 @@ public class CategoriaSQLite implements CategoriaDAO {
                     .uniqueResult();
         }
     }
+
+    @Override
+    public List<Categoria> getCategorias() {
+
+        try (Session session = factory.openSession()) {
+
+            return session.createQuery(
+                            "from Categoria where conta = :conta", Categoria.class)
+                    .setParameter("conta", Main.contaAtiva)
+                    .list();
+        }
+    }
+
 }

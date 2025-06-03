@@ -1,5 +1,6 @@
 package com.example.view;
 
+import com.example.controller.CategoriaController;
 import com.example.controller.TransacaoController;
 import com.example.model.entity.Categoria;
 import com.example.model.impl.ContaSQLite;
@@ -14,6 +15,7 @@ public class NovaTransacao extends JFrame {
 
     private JFormattedTextField campoData = null;
     private final TransacaoController t = new TransacaoController();
+    private final CategoriaController c = new CategoriaController();
 
     public NovaTransacao() {
 
@@ -43,8 +45,7 @@ public class NovaTransacao extends JFrame {
         panel.add(campoTipo);
 
         //Obtem categorias e insere campo
-        ContaSQLite SQLite = new ContaSQLite();
-        List<Categoria> categorias = SQLite.getCategorias();
+        List<Categoria> categorias = c.getCategorias();
         panel.add(new JLabel("Categoria:"));
         JComboBox<String> campoCategoria = new JComboBox<String>();
         for (Categoria categoria : categorias) {

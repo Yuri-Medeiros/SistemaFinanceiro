@@ -1,6 +1,7 @@
 package com.example.view;
 
 import com.example.Main;
+import com.example.controller.CategoriaController;
 import com.example.model.dao.ContaDAO;
 import com.example.model.impl.ContaSQLite;
 
@@ -11,6 +12,8 @@ import static com.example.util.CriarBotao.criarBotao;
 
 
 public class TelaPrincipal extends JFrame {
+
+    private final CategoriaController c = new CategoriaController();
 
     public TelaPrincipal() {
 
@@ -52,10 +55,8 @@ public class TelaPrincipal extends JFrame {
         //Configura ação do botão de adicionar transação
         btnAdicionar.addActionListener(e -> {
 
-            ContaDAO SQLite = new ContaSQLite();
-
             //Verifica se não há categorias cadastrada e abre gerenciamento de categorias
-            if(SQLite.getCategorias().isEmpty()) {
+            if(c.getCategorias().isEmpty()) {
 
                 JOptionPane.showMessageDialog(null, "Não há categorias cadastrada. Adicionar uma categoria!");
                 SwingUtilities.invokeLater(() -> new GerenciaCategorias().setVisible(true));
