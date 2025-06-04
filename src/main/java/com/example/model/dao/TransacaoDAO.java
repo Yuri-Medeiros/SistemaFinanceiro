@@ -14,7 +14,6 @@ public interface TransacaoDAO {
 
     boolean salvar(Transacao transacao);
     List<Transacao> getTransacaoByCategoria(String categoria);
-    List<Transacao> getTransacoes();
     List<Transacao> getTransacoesConsulta(LocalDate dataInicio, LocalDate dataFim, String tipo);
 
 }

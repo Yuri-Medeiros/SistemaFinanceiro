@@ -12,6 +12,7 @@ import com.example.view.NovaTransacao;
 import com.example.view.TelaPrincipal;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -95,23 +96,48 @@ public class TransacaoController {
             String dataInicio,
             String dataFinal,
             String tipo,
-            JTextArea resultadoArea) {
+            DefaultTableModel table,
+            JLabel totalReceitas,
+            JLabel totalDespesas) {
 
         try {
+
+            //Limpa a tabela atual
+            table.setNumRows(0);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate inicio = dataInicio.isEmpty() ? LocalDate.MIN : LocalDate.parse(dataInicio, formatter);
             LocalDate fim = dataFinal.isEmpty() ? LocalDate.MAX : LocalDate.parse(dataFinal, formatter);
 
-            resultadoArea.setText("Data | Categoria | Descrição | Valor\n");
-            for (Transacao transacao : transacaoSQLite.getTransacoesConsulta(inicio, fim, tipo)) {
+            List<Transacao> transacoes = transacaoSQLite.getTransacoesConsulta(inicio, fim, tipo);
+
+            float receitasTotal = 0.0f;
+            float despesasTotal = 0.0f;
+
+            for (Transacao transacao : transacoes) {
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 String dataFormatada = dtf.format(transacao.getData());
 
-                String transacaoString = dataFormatada + " - " + transacao.getCategoria() + " - " + transacao.getDescricao() + " - R$" + transacao.getValor();
-                resultadoArea.append(transacaoString + "\n");
+                String[] row = {
+                        transacao.getTipo(),
+                        dataFormatada,
+                        transacao.getCategoria(),
+                        transacao.getDescricao(),
+                        "R$" + transacao.getValor()
+                };
+                table.addRow(row);
+
+                if (transacao.getTipo().equals("Receita")) {
+                    receitasTotal += transacao.getValor();
+                } else if (transacao.getTipo().equals("Despesa")) {
+                    despesasTotal += transacao.getValor();
+                }
             }
+
+            totalReceitas.setText("Total Receitas: R$" + receitasTotal);
+            totalDespesas.setText("Total Despesas: R$" + despesasTotal);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

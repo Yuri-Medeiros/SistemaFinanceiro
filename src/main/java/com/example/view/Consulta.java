@@ -4,9 +4,13 @@ import com.example.controller.ContaController;
 import com.example.controller.TransacaoController;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.text.ParseException;
+import java.util.AbstractMap;
 
 public class Consulta extends JFrame {
 
@@ -25,11 +29,10 @@ public class Consulta extends JFrame {
 
         //Cria painel principal
         JPanel panel = new JPanel(new BorderLayout());
-        JPanel filtrosPanel = new JPanel(new GridLayout(0, 2, 5, 5));
 
-        //Adiciona titulos de campos ao painel
-        panel.add(new JLabel("Data inicial:"));
-        panel.add(new JLabel("Data final:"));
+        //Cria painel de filtros e define um espaçamentos entre os elementos
+        JPanel filtrosPanel = new JPanel(new GridLayout(0, 2, 5, 5));
+        filtrosPanel.setBorder(BorderFactory.createEmptyBorder(5, 50, 5,50));
 
         //Cria campos de data
         try {
@@ -37,10 +40,7 @@ public class Consulta extends JFrame {
             mascaraData.setPlaceholderCharacter('_');
 
             campoDataFiltroInicial = new JFormattedTextField(mascaraData);
-            campoDataFiltroInicial.setColumns(10);
-
             campoDataFiltroFinal = new JFormattedTextField(mascaraData);
-            campoDataFiltroFinal.setColumns(10);
 
             panel.add(campoDataFiltroInicial);
             panel.add(campoDataFiltroFinal);
@@ -61,10 +61,32 @@ public class Consulta extends JFrame {
         filtrosPanel.add(tipoLabel);
         filtrosPanel.add(tipoCombo);
 
-        //Cria area de texto para resultados
-        JTextArea resultadoArea = new JTextArea();
-        resultadoArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(resultadoArea);
+        //Cria painel para resumos
+        JPanel resumoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+        JLabel totalReceitas = new JLabel("Total Receitas: R$");
+        JLabel totalDespesas = new JLabel("Total Despesas: R$");
+
+        resumoPanel.setBorder(BorderFactory.createTitledBorder("Resumo"));
+        resumoPanel.add(totalReceitas);
+        resumoPanel.add(totalDespesas);
+
+        //Cria cabeçalho para tabela de resultados
+        String[] header = {"Tipo", "Data", "Categoria", "Descrição", "Valor"};
+        DefaultTableModel model = new DefaultTableModel(header, 0);
+
+        //Instancia a tabela
+        JTable resumoTable = new JTable(model);
+        JScrollPane scrollPane = new JScrollPane(resumoTable);
+
+        //Aplica BOLD no cabeçalho da tabela
+        Font font_atual = resumoTable.getFont();
+        Font negrito = font_atual.deriveFont(Font.BOLD);
+        resumoTable.getTableHeader().setFont(negrito);
+
+        //Centraliza o conteudo das celulas
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        resumoTable.setDefaultRenderer(Object.class, centerRenderer);
 
         //Cria botão de consulta
         JButton consultarButton = new JButton("Consultar");
@@ -79,7 +101,9 @@ public class Consulta extends JFrame {
                         campoDataFiltroInicial.getText(),
                         campoDataFiltroFinal.getText(),
                         (String) tipoCombo.getSelectedItem(),
-                        resultadoArea
+                        model,
+                        totalReceitas,
+                        totalDespesas
                 ));
 
         //Cria botão de cancelamento
@@ -100,9 +124,13 @@ public class Consulta extends JFrame {
         panelBotao.add(consultarButton);
         panelBotao.add(cancelButton);
 
+        JPanel centroPanel = new JPanel(new BorderLayout());
+        centroPanel.add(resumoPanel, BorderLayout.NORTH);
+        centroPanel.add(scrollPane, BorderLayout.CENTER);
+
         //Adiciona todos os frames ao painel
         panel.add(filtrosPanel, BorderLayout.NORTH);
-        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(centroPanel, BorderLayout.CENTER);
         panel.add(panelBotao, BorderLayout.SOUTH);
 
         //Adiciona painel ao frame principal

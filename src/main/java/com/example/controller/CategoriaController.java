@@ -40,6 +40,12 @@ public class CategoriaController extends JFrame {
         } while (novaCategoria.isEmpty());
 
         try {
+
+            if (categoriaSQLite.getCategoria(novaCategoria) != null) {
+                JOptionPane.showMessageDialog(view, "Categoria já cadastrada.");
+                return;
+            }
+
             //Instancia entidade de categoria
             Categoria categoria = new Categoria(Main.contaAtiva, novaCategoria);
 

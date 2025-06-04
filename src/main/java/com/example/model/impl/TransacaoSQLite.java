@@ -67,24 +67,6 @@ public class TransacaoSQLite implements TransacaoDAO {
     }
 
     @Override
-    public List<Transacao> getTransacoes() {
-
-        try (Session session = factory.openSession()) {
-
-            List<Transacao> transacaos = session.createQuery(
-                            "from Transacao where conta = :conta", Transacao.class)
-                    .setParameter("conta", Main.contaAtiva)
-                    .list();
-
-            if (transacaos.isEmpty()) {
-                throw new  IllegalArgumentException("Não possui transacoes");
-            }
-
-            return transacaos;
-        }
-    }
-
-    @Override
     public List<Transacao> getTransacoesConsulta(LocalDate dataInicio, LocalDate dataFim, String tipo){
 
         Transaction tx = null;
