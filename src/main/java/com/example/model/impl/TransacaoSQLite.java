@@ -78,19 +78,21 @@ public class TransacaoSQLite implements TransacaoDAO {
             if (tipo.equals("Todos")) {
 
                 return session.createQuery(
-                                "from Transacao where data between :dtInicio and :dtFinal",
+                                "from Transacao where conta = :conta and data between :dtInicio and :dtFinal",
                                 Transacao.class)
                         .setParameter("dtInicio", dataInicio)
                         .setParameter("dtFinal", dataFim)
+                        .setParameter("conta", Main.contaAtiva)
                         .list();
             }
 
             return session.createQuery(
-            "from Transacao where tipo = :tipo and data between :dtInicio and :dtFinal",
+            "from Transacao where conta = :conta and tipo = :tipo and data between :dtInicio and :dtFinal",
             Transacao.class)
                     .setParameter("tipo", tipo)
                     .setParameter("dtInicio", dataInicio)
                     .setParameter("dtFinal", dataFim)
+                    .setParameter("conta", Main.contaAtiva)
                     .list();
         }
     }
